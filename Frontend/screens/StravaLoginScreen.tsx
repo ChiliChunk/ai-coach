@@ -11,8 +11,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
-import stravaService from '../services/stravaService';
-import { STRAVA_CONFIG } from '../config/strava.config';
+import stravaService, { StravaConfig } from '../services/stravaService';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -28,6 +27,7 @@ type Props = {
 export default function StravaLoginScreen({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [stravaConfig, setStravaConfig] = useState<StravaConfig | null>(null);
 
   // Utilise le proxy Expo pour gérer le callback OAuth
   // Le proxy transforme l'URL HTTPS en deep link pour l'app
@@ -38,14 +38,36 @@ export default function StravaLoginScreen({ navigation }: Props) {
   // Afficher l'URI pour debug
   console.log('Redirect URI:', redirectUri);
 
+  // Charger la config au démarrage
+  useEffect(() => {
+    loadConfigAndCheckAuth();
+  }, []);
+
+  const loadConfigAndCheckAuth = async () => {
+    console.log('Loading Strava config...');
+    try {
+      const config = await stravaService.getConfig();
+      console.log('Config loaded successfully:', config);
+      setStravaConfig(config);
+      await checkAuthentication();
+    } catch (error) {
+      console.error('Error loading config:', error);
+      Alert.alert(
+        'Erreur de connexion',
+        'Impossible de se connecter au backend. Vérifiez que le serveur est démarré et que vous êtes sur le même réseau WiFi.'
+      );
+      setIsCheckingAuth(false);
+    }
+  };
+
   const discovery = {
-    authorizationEndpoint: STRAVA_CONFIG.AUTHORIZATION_ENDPOINT,
+    authorizationEndpoint: stravaConfig?.authorizationEndpoint || 'https://www.strava.com/oauth/mobile/authorize',
   };
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
-      clientId: STRAVA_CONFIG.CLIENT_ID,
-      scopes: STRAVA_CONFIG.SCOPES,
+      clientId: stravaConfig?.clientId || '',
+      scopes: stravaConfig?.scopes || [],
       redirectUri: redirectUri,
       responseType: AuthSession.ResponseType.Code,
       extraParams: {
@@ -54,10 +76,6 @@ export default function StravaLoginScreen({ navigation }: Props) {
     },
     discovery
   );
-
-  useEffect(() => {
-    checkAuthentication();
-  }, []);
 
   useEffect(() => {
     if (response?.type === 'success') {
@@ -128,12 +146,14 @@ export default function StravaLoginScreen({ navigation }: Props) {
         <Text style={styles.debugText}>Redirect URI: {redirectUri}</Text>
 
         <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+          style={[styles.button, (isLoading || !stravaConfig) && styles.buttonDisabled]}
           onPress={handleLogin}
-          disabled={isLoading || !request}
+          disabled={isLoading || !request || !stravaConfig}
         >
           {isLoading ? (
             <ActivityIndicator color="white" />
+          ) : !stravaConfig ? (
+            <Text style={styles.buttonText}>Chargement...</Text>
           ) : (
             <Text style={styles.buttonText}>Se connecter avec Strava</Text>
           )}

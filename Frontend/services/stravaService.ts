@@ -1,10 +1,9 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STRAVA_CONFIG } from '../config/strava.config';
+import { API_CONFIG } from '../config/api.config';
 
-const STRAVA_TOKEN_KEY = '@strava_token';
-const STRAVA_REFRESH_TOKEN_KEY = '@strava_refresh_token';
-const STRAVA_EXPIRES_AT_KEY = '@strava_expires_at';
+const USER_ID_KEY = '@user_id';
+const STRAVA_CONFIG_KEY = '@strava_config';
 
 export interface StravaAthlete {
   id: number;
@@ -38,100 +37,89 @@ export interface StravaActivity {
   };
 }
 
-export interface StravaTokenResponse {
-  token_type: string;
-  expires_at: number;
-  expires_in: number;
-  refresh_token: string;
-  access_token: string;
+export interface StravaConfig {
+  clientId: string;
+  authorizationEndpoint: string;
+  scopes: string[];
+}
+
+export interface AuthResponse {
   athlete: StravaAthlete;
+  expiresAt: number;
 }
 
 class StravaService {
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
-  private expiresAt: number | null = null;
+  private userId: string | null = null;
+  private config: StravaConfig | null = null;
 
-  async saveTokens(tokenResponse: StravaTokenResponse): Promise<void> {
-    this.accessToken = tokenResponse.access_token;
-    this.refreshToken = tokenResponse.refresh_token;
-    this.expiresAt = tokenResponse.expires_at;
+  /**
+   * Génère un ID utilisateur unique pour cette session
+   */
+  private async getUserId(): Promise<string> {
+    if (this.userId) return this.userId;
 
-    await AsyncStorage.setItem(STRAVA_TOKEN_KEY, tokenResponse.access_token);
-    await AsyncStorage.setItem(STRAVA_REFRESH_TOKEN_KEY, tokenResponse.refresh_token);
-    await AsyncStorage.setItem(STRAVA_EXPIRES_AT_KEY, tokenResponse.expires_at.toString());
+    let userId = await AsyncStorage.getItem(USER_ID_KEY);
+    if (!userId) {
+      userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      await AsyncStorage.setItem(USER_ID_KEY, userId);
+    }
+
+    this.userId = userId;
+    return userId;
   }
 
-  async loadTokens(): Promise<boolean> {
-    try {
-      const accessToken = await AsyncStorage.getItem(STRAVA_TOKEN_KEY);
-      const refreshToken = await AsyncStorage.getItem(STRAVA_REFRESH_TOKEN_KEY);
-      const expiresAt = await AsyncStorage.getItem(STRAVA_EXPIRES_AT_KEY);
+  /**
+   * Récupère la configuration Strava depuis le backend
+   */
+  async getConfig(): Promise<StravaConfig> {
+    if (this.config) return this.config;
 
-      if (accessToken && refreshToken && expiresAt) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.expiresAt = parseInt(expiresAt);
-        return true;
+    try {
+      const cachedConfig = await AsyncStorage.getItem(STRAVA_CONFIG_KEY);
+      if (cachedConfig) {
+        this.config = JSON.parse(cachedConfig);
+        console.log('Loaded config from cache:', this.config);
+        return this.config!;
       }
-      return false;
+
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.CONFIG}`;
+      console.log('Fetching config from:', url);
+
+      const response = await axios.get<StravaConfig>(url);
+      console.log('Config received:', response.data);
+
+      this.config = response.data;
+      await AsyncStorage.setItem(STRAVA_CONFIG_KEY, JSON.stringify(response.data));
+      return this.config;
     } catch (error) {
-      console.error('Error loading tokens:', error);
-      return false;
+      console.error('Error fetching config:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error details:', {
+          message: error.message,
+          code: error.code,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+      }
+      throw new Error('Failed to fetch Strava configuration');
     }
   }
 
-  async clearTokens(): Promise<void> {
-    this.accessToken = null;
-    this.refreshToken = null;
-    this.expiresAt = null;
-
-    await AsyncStorage.removeItem(STRAVA_TOKEN_KEY);
-    await AsyncStorage.removeItem(STRAVA_REFRESH_TOKEN_KEY);
-    await AsyncStorage.removeItem(STRAVA_EXPIRES_AT_KEY);
-  }
-
-  isTokenExpired(): boolean {
-    if (!this.expiresAt) return true;
-    const now = Math.floor(Date.now() / 1000);
-    return now >= this.expiresAt;
-  }
-
-  async refreshAccessToken(): Promise<boolean> {
-    if (!this.refreshToken) return false;
-
+  /**
+   * Échange le code d'autorisation contre des tokens via le backend
+   */
+  async exchangeCodeForToken(code: string): Promise<AuthResponse | null> {
     try {
-      const response = await axios.post<StravaTokenResponse>(
-        STRAVA_CONFIG.TOKEN_ENDPOINT,
+      const userId = await this.getUserId();
+
+      const response = await axios.post<AuthResponse>(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.EXCHANGE}`,
         {
-          client_id: STRAVA_CONFIG.CLIENT_ID,
-          client_secret: STRAVA_CONFIG.CLIENT_SECRET,
-          grant_type: 'refresh_token',
-          refresh_token: this.refreshToken,
+          code,
+          userId,
         }
       );
 
-      await this.saveTokens(response.data);
-      return true;
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      return false;
-    }
-  }
-
-  async exchangeCodeForToken(code: string): Promise<StravaTokenResponse | null> {
-    try {
-      const response = await axios.post<StravaTokenResponse>(
-        STRAVA_CONFIG.TOKEN_ENDPOINT,
-        {
-          client_id: STRAVA_CONFIG.CLIENT_ID,
-          client_secret: STRAVA_CONFIG.CLIENT_SECRET,
-          code: code,
-          grant_type: 'authorization_code',
-        }
-      );
-
-      await this.saveTokens(response.data);
       return response.data;
     } catch (error) {
       console.error('Error exchanging code for token:', error);
@@ -139,31 +127,27 @@ class StravaService {
     }
   }
 
-  async getValidAccessToken(): Promise<string | null> {
-    if (!this.accessToken) {
-      const loaded = await this.loadTokens();
-      if (!loaded) return null;
-    }
-
-    if (this.isTokenExpired()) {
-      const refreshed = await this.refreshAccessToken();
-      if (!refreshed) return null;
-    }
-
-    return this.accessToken;
+  /**
+   * Efface les données locales
+   */
+  async clearLocalData(): Promise<void> {
+    this.userId = null;
+    this.config = null;
+    await AsyncStorage.removeItem(USER_ID_KEY);
+    await AsyncStorage.removeItem(STRAVA_CONFIG_KEY);
   }
 
+  /**
+   * Récupère les informations de l'athlète via le backend
+   */
   async getAthlete(): Promise<StravaAthlete | null> {
-    const token = await this.getValidAccessToken();
-    if (!token) return null;
-
     try {
+      const userId = await this.getUserId();
+
       const response = await axios.get<StravaAthlete>(
-        `${STRAVA_CONFIG.API_BASE_URL}/athlete`,
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.ATHLETE}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          params: { userId },
         }
       );
       return response.data;
@@ -173,20 +157,20 @@ class StravaService {
     }
   }
 
+  /**
+   * Récupère les activités via le backend
+   */
   async getActivities(page: number = 1, perPage: number = 30): Promise<StravaActivity[] | null> {
-    const token = await this.getValidAccessToken();
-    if (!token) return null;
-
     try {
+      const userId = await this.getUserId();
+
       const response = await axios.get<StravaActivity[]>(
-        `${STRAVA_CONFIG.API_BASE_URL}/athlete/activities`,
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.ACTIVITIES}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           params: {
+            userId,
             page,
-            per_page: perPage,
+            perPage,
           },
         }
       );
@@ -197,17 +181,17 @@ class StravaService {
     }
   }
 
+  /**
+   * Récupère une activité spécifique via le backend
+   */
   async getActivity(activityId: number): Promise<StravaActivity | null> {
-    const token = await this.getValidAccessToken();
-    if (!token) return null;
-
     try {
+      const userId = await this.getUserId();
+
       const response = await axios.get<StravaActivity>(
-        `${STRAVA_CONFIG.API_BASE_URL}/activities/${activityId}`,
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.ACTIVITY(activityId)}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          params: { userId },
         }
       );
       return response.data;
@@ -217,32 +201,43 @@ class StravaService {
     }
   }
 
+  /**
+   * Vérifie si l'utilisateur est authentifié via le backend
+   */
   async isAuthenticated(): Promise<boolean> {
-    const hasTokens = await this.loadTokens();
-    if (!hasTokens) return false;
+    try {
+      const userId = await this.getUserId();
 
-    if (this.isTokenExpired()) {
-      return await this.refreshAccessToken();
+      const response = await axios.get<{ authenticated: boolean }>(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.CHECK_AUTH}`,
+        {
+          params: { userId },
+        }
+      );
+      return response.data.authenticated;
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+      return false;
     }
-
-    return true;
   }
 
+  /**
+   * Déconnecte l'utilisateur via le backend
+   */
   async logout(): Promise<void> {
-    const token = await this.getValidAccessToken();
+    try {
+      const userId = await this.getUserId();
 
-    if (token) {
-      try {
-        await axios.post(
-          STRAVA_CONFIG.REVOKE_ENDPOINT,
-          { access_token: token }
-        );
-      } catch (error) {
-        console.error('Error revoking token:', error);
-      }
+      await axios.post(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.LOGOUT}`,
+        { userId }
+      );
+
+      await this.clearLocalData();
+    } catch (error) {
+      console.error('Error logging out:', error);
+      await this.clearLocalData();
     }
-
-    await this.clearTokens();
   }
 }
 
