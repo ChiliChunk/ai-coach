@@ -60,7 +60,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
     },
     {
       id: 'duration',
-      question: "Durée de votre plan (en semaines) ?",
+      question: "Dans combien de temps est la course? (en semaines) ?",
       type: 'number' as const,
       placeholder: 'Ex: 8',
       unit: 'semaines',

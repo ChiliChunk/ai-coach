@@ -112,63 +112,53 @@ export default function PlanScreen() {
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.planContainer}>
         <View style={styles.header}>
-          <Text style={styles.title}>Mon Plan d'Entraînement</Text>
+          <Text style={styles.title}>Mon Plan</Text>
           <TouchableOpacity onPress={handleDeletePlan} style={styles.deleteButton}>
             <Ionicons name="trash-outline" size={24} color="#FF6B35" />
           </TouchableOpacity>
         </View>
 
         {planData && (
-          <View style={styles.detailsContainer}>
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="trophy-outline" size={28} color="#FF6B35" />
-                <Text style={styles.cardTitle}>Nom de la course</Text>
-              </View>
-              <Text style={styles.cardValue}>
-                {planData.course_label}
-              </Text>
+          <View style={styles.compactCard}>
+            <View style={styles.courseTitleSection}>
+              <Ionicons name="trophy" size={24} color="#FF6B35" />
+              <Text style={styles.courseTitle}>{planData.course_label}</Text>
             </View>
 
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="bicycle-outline" size={28} color="#FF6B35" />
-                <Text style={styles.cardTitle}>Type de course</Text>
+            <View style={styles.divider} />
+
+            <View style={styles.infoGrid}>
+              <View style={styles.infoItem}>
+                <Ionicons name="bicycle-outline" size={20} color="#FF6B35" />
+                <Text style={styles.infoLabel}>Type</Text>
+                <Text style={styles.infoValue}>
+                  {getLabel('course_type', planData.course_type)}
+                </Text>
               </View>
-              <Text style={styles.cardValue}>
-                {getLabel('course_type', planData.course_type)}
-              </Text>
+
+              <View style={styles.infoItem}>
+                <Ionicons name="calendar-outline" size={20} color="#FF6B35" />
+                <Text style={styles.infoLabel}>Fréquence</Text>
+                <Text style={styles.infoValue}>
+                  {getLabel('frequency', planData.frequency)}/sem
+                </Text>
+              </View>
+
+              <View style={styles.infoItem}>
+                <Ionicons name="time-outline" size={20} color="#FF6B35" />
+                <Text style={styles.infoLabel}>Durée</Text>
+                <Text style={styles.infoValue}>
+                  {planData.duration} sem.
+                </Text>
+              </View>
             </View>
 
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="calendar-outline" size={28} color="#FF6B35" />
-                <Text style={styles.cardTitle}>Fréquence</Text>
-              </View>
-              <Text style={styles.cardValue}>
-                {getLabel('frequency', planData.frequency)} séances / semaine
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="time-outline" size={28} color="#FF6B35" />
-                <Text style={styles.cardTitle}>Durée</Text>
-              </View>
-              <Text style={styles.cardValue}>
-                {planData.duration} semaines
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="checkmark-circle-outline" size={28} color="#FF6B35" />
-                <Text style={styles.cardTitle}>Créé le</Text>
-              </View>
-              <Text style={styles.cardValue}>
-                {new Date(planData.createdAt).toLocaleDateString('fr-FR', {
+            <View style={styles.dateSection}>
+              <Ionicons name="checkmark-circle" size={16} color="#666" />
+              <Text style={styles.dateText}>
+                Créé le {new Date(planData.createdAt).toLocaleDateString('fr-FR', {
                   day: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   year: 'numeric',
                 })}
               </Text>
@@ -177,8 +167,8 @@ export default function PlanScreen() {
         )}
 
         <TouchableOpacity style={styles.createNewButton} onPress={handleCreatePlan}>
-          <Ionicons name="refresh-outline" size={20} color="#fff" />
-          <Text style={styles.createNewButtonText}>Créer un nouveau plan</Text>
+          <Ionicons name="sparkles-outline" size={20} color="#fff" />
+          <Text style={styles.createNewButtonText}>Generer les Scéances</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -209,42 +199,73 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#ffffff',
   },
   deleteButton: {
     padding: 8,
   },
-  detailsContainer: {
-    gap: 15,
-  },
-  card: {
+  compactCard: {
     backgroundColor: 'rgba(45, 45, 45, 0.7)',
     padding: 20,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: 'rgba(252, 76, 2, 0.2)',
   },
-  cardHeader: {
+  courseTitleSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    gap: 10,
+    gap: 12,
+    marginBottom: 15,
   },
-  cardTitle: {
-    fontSize: 16,
+  courseTitle: {
+    fontSize: 22,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: 'rgba(252, 76, 2, 0.2)',
+    marginBottom: 15,
+  },
+  infoGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  infoItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 6,
+  },
+  infoLabel: {
+    fontSize: 12,
     color: '#b0b0b0',
     fontWeight: '500',
   },
-  cardValue: {
-    fontSize: 20,
+  infoValue: {
+    fontSize: 16,
     color: '#ffffff',
     fontWeight: '600',
-    marginLeft: 38,
+    textAlign: 'center',
+  },
+  dateSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(252, 76, 2, 0.1)',
+  },
+  dateText: {
+    fontSize: 12,
+    color: '#666',
   },
   createNewButton: {
     flexDirection: 'row',
