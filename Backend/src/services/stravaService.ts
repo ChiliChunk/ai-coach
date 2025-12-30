@@ -62,6 +62,10 @@ class StravaService {
    */
   async exchangeCodeForToken(code: string): Promise<StravaTokenResponse> {
     try {
+      console.log('Exchanging code for token...');
+      console.log('Code:', code);
+      console.log('Client ID:', stravaConfig.clientId);
+      
       const response = await axios.post<StravaTokenResponse>(
         stravaConfig.tokenEndpoint,
         {
@@ -72,9 +76,19 @@ class StravaService {
         }
       );
 
+      console.log('Token exchange successful');
       return response.data;
     } catch (error) {
-      console.error('Error exchanging code for token:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Strava API Error:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          message: error.message,
+        });
+      } else {
+        console.error('Error exchanging code for token:', error);
+      }
       throw new Error('Failed to exchange authorization code');
     }
   }

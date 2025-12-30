@@ -28,6 +28,10 @@ export const exchangeToken = async (req: Request, res: Response, next: NextFunct
   try {
     const { code, userId } = req.body;
 
+    console.log('Exchange token request received');
+    console.log('User ID:', userId);
+    console.log('Code received:', code ? 'Yes' : 'No');
+
     if (!code) {
       res.status(400).json({ error: 'Authorization code is required' });
       return;
@@ -47,12 +51,15 @@ export const exchangeToken = async (req: Request, res: Response, next: NextFunct
       expiresAt: tokenResponse.expires_at,
     });
 
+    console.log('Token stored for user:', userId);
+
     // Retourner les données de l'athlète sans exposer les tokens
     res.json({
       athlete: tokenResponse.athlete,
       expiresAt: tokenResponse.expires_at,
     });
   } catch (error) {
+    console.error('Error in exchangeToken controller:', error);
     next(error);
   }
 };

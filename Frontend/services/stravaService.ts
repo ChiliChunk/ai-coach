@@ -112,17 +112,26 @@ class StravaService {
     try {
       const userId = await this.getUserId();
 
-      const response = await axios.post<AuthResponse>(
-        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.EXCHANGE}`,
-        {
-          code,
-          userId,
-        }
-      );
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.EXCHANGE}`;
+      console.log('Exchanging code for token...');
+      console.log('URL:', url);
+      console.log('User ID:', userId);
+      console.log('Code:', code);
 
+      const response = await axios.post<AuthResponse>(url, {
+        code,
+        userId,
+      });
+
+      console.log('Token exchange successful:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error exchanging code for token:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Response status:', error.response?.status);
+        console.error('Response data:', error.response?.data);
+        console.error('Error message:', error.message);
+      }
       return null;
     }
   }

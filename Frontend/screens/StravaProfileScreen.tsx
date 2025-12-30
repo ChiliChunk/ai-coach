@@ -10,20 +10,13 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import stravaService, { StravaAthlete, StravaActivity } from '../services/stravaService';
 
-type StravaProfileScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'StravaProfile'
->;
-
-type Props = {
-  navigation: StravaProfileScreenNavigationProp;
-};
-
-export default function StravaProfileScreen({ navigation }: Props) {
+export default function StravaProfileScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [athlete, setAthlete] = useState<StravaAthlete | null>(null);
   const [activities, setActivities] = useState<StravaActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,7 +122,7 @@ export default function StravaProfileScreen({ navigation }: Props) {
       {athlete && (
         <View style={styles.profileSection}>
           <Image
-            source={{ uri: athlete.profile_medium }}
+            source={{ uri: athlete.profile }}
             style={styles.profileImage}
           />
           <Text style={styles.athleteName}>
@@ -179,6 +172,14 @@ export default function StravaProfileScreen({ navigation }: Props) {
                     {formatSpeed(activity.average_speed)}
                   </Text>
                 </View>
+                {activity.average_heartrate && (
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>FC moy.</Text>
+                    <Text style={styles.statValue}>
+                      {Math.round(activity.average_heartrate)} bpm
+                    </Text>
+                  </View>
+                )}
               </View>
               {activity.total_elevation_gain > 0 && (
                 <Text style={styles.elevationText}>
@@ -190,12 +191,7 @@ export default function StravaProfileScreen({ navigation }: Props) {
         )}
       </View>
 
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.navigate('Home')}
-      >
-        <Text style={styles.backButtonText}>Retour à l'accueil</Text>
-      </TouchableOpacity>
+      {/* Bouton retour à l'accueil supprimé */}
     </ScrollView>
   );
 }

@@ -93,7 +93,7 @@ export default function StravaLoginScreen({ navigation }: Props) {
     setIsCheckingAuth(true);
     const isAuth = await stravaService.isAuthenticated();
     if (isAuth) {
-      navigation.replace('StravaProfile');
+      navigation.replace('MainTabs');
     }
     setIsCheckingAuth(false);
   };
@@ -103,7 +103,7 @@ export default function StravaLoginScreen({ navigation }: Props) {
     try {
       const tokenResponse = await stravaService.exchangeCodeForToken(code);
       if (tokenResponse) {
-        navigation.replace('StravaProfile');
+        navigation.replace('MainTabs');
       } else {
         Alert.alert('Erreur', 'Impossible d\'obtenir le token d\'accès');
       }
