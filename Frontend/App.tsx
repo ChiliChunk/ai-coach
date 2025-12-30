@@ -37,12 +37,17 @@ function MainTabs() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#FC4C02',
-        tabBarInactiveTintColor: 'gray',
-        headerStyle: {
-          backgroundColor: '#007AFF',
+        tabBarActiveTintColor: '#FF6B35',
+        tabBarInactiveTintColor: '#666',
+        tabBarStyle: {
+          backgroundColor: 'rgba(45, 45, 45, 0.95)',
+          borderTopColor: 'rgba(252, 76, 2, 0.3)',
+          borderTopWidth: 1,
         },
-        headerTintColor: '#fff',
+        headerStyle: {
+          backgroundColor: 'rgba(26, 26, 26, 0.98)',
+        },
+        headerTintColor: '#FF6B35',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -69,9 +74,9 @@ export default function App() {
         initialRouteName="StravaLogin"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#007AFF',
+            backgroundColor: 'rgba(26, 26, 26, 0.98)',
           },
-          headerTintColor: '#fff',
+          headerTintColor: '#FF6B35',
           headerTitleStyle: {
             fontWeight: 'bold',
           },

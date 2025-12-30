@@ -10,13 +10,20 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../App';
 import stravaService, { StravaAthlete, StravaActivity } from '../services/stravaService';
 
-export default function StravaProfileScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+type StravaProfileScreenNavigationProp = BottomTabNavigationProp<
+  MainTabParamList,
+  'Profile'
+>;
+
+type Props = {
+  navigation: StravaProfileScreenNavigationProp;
+};
+
+export default function StravaProfileScreen({ navigation }: Props) {
   const [athlete, setAthlete] = useState<StravaAthlete | null>(null);
   const [activities, setActivities] = useState<StravaActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -199,45 +206,47 @@ export default function StravaProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#1a1a1a',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#1a1a1a',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: '#b0b0b0',
   },
   profileSection: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(45, 45, 45, 0.8)',
     padding: 20,
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: 'rgba(252, 76, 2, 0.3)',
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginBottom: 15,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 107, 53, 0.5)',
   },
   athleteName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
     marginBottom: 5,
   },
   athleteLocation: {
     fontSize: 16,
-    color: '#666',
+    color: '#b0b0b0',
     marginBottom: 15,
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: 'rgba(199, 62, 0, 0.8)',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -253,24 +262,26 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
     marginBottom: 15,
   },
   noActivitiesText: {
     fontSize: 16,
-    color: '#666',
+    color: '#b0b0b0',
     textAlign: 'center',
     marginTop: 20,
   },
   activityCard: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(45, 45, 45, 0.7)',
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(252, 76, 2, 0.2)',
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: '#FC4C02',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 1.41,
   },
   activityHeader: {
@@ -282,21 +293,21 @@ const styles = StyleSheet.create({
   activityName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: '#ffffff',
     flex: 1,
   },
   activityType: {
     fontSize: 12,
-    color: '#FC4C02',
+    color: '#FF6B35',
     fontWeight: '600',
-    backgroundColor: '#FFE8E0',
+    backgroundColor: 'rgba(252, 76, 2, 0.2)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   activityDate: {
     fontSize: 14,
-    color: '#999',
+    color: '#808080',
     marginBottom: 10,
   },
   activityStats: {
@@ -308,21 +319,21 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
+    color: '#b0b0b0',
     marginBottom: 2,
   },
   statValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#FF6B35',
   },
   elevationText: {
     fontSize: 14,
-    color: '#666',
+    color: '#b0b0b0',
     marginTop: 10,
   },
   backButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'rgba(252, 76, 2, 0.9)',
     margin: 15,
     padding: 15,
     borderRadius: 10,
