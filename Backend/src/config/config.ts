@@ -7,6 +7,7 @@ interface Config {
   nodeEnv: string;
   apiVersion: string;
   corsOrigin: string;
+  openaiApiKey: string;
 }
 
 const config: Config = {
@@ -14,6 +15,7 @@ const config: Config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   apiVersion: process.env.API_VERSION || 'v1',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:8081',
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
 };
 
 export default config;

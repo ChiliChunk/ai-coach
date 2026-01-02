@@ -24,6 +24,8 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
   const [formData, setFormData] = useState({
     course_label: '',
     course_type: '',
+    course_km: '',
+    course_elevation: '',
     frequency: '',
     duration: '',
   });
@@ -45,6 +47,18 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
         { label: 'Course sur route', value: 'road_running' },
         { label: 'Trail', value: 'trail' },
       ],
+    },
+     {
+      id: 'course_km',
+      question: 'Quel est la distance de la course? (en km)',
+      type: 'number' as const,
+      placeholder: 'Ex: 42.195',
+    },
+    {
+      id: 'course_elevation',
+      question: "Quel est le dénivelé de la course? (en mètres)",
+      type: 'number' as const,
+      placeholder: 'Ex: 500',
     },
      {
       id: 'frequency',
@@ -190,7 +204,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
                   keyboardType="numeric"
                   value={formData[question.id as keyof typeof formData]}
                   onChangeText={(value) => handleNumberInput(question.id, value)}
-                  maxLength={3}
+                  maxLength={question.id === 'course_elevation' ? 5 : 3}
                 />
                 {question.unit && formData[question.id as keyof typeof formData] && (
                   <Text style={styles.unitText}>{question.unit}</Text>

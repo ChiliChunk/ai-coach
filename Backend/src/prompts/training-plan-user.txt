@@ -1,0 +1,41 @@
+Génère un plan d'entraînement complet pour la course suivante :
+
+**Informations de la course :**
+- Nom de la course : {{course_label}}
+- Type de course : {{course_type}}
+- Fréquence d'entraînement : {{frequency}} séances par semaine
+- Durée de préparation : {{duration}} semaines
+- 20 dernières activités de l'utilisateur : {{activities}}
+
+**Instructions :**
+1. Crée un plan d'entraînement progressif sur {{duration}} semaines
+2. Chaque semaine doit contenir {{frequency}} séances d'entraînement
+3. Le plan doit être adapté au type de course ({{course_type}})
+4. Respecte une progression logique avec alternance effort/récupération
+5. Inclus une phase de préparation, une phase de développement et une phase d'affûtage
+
+**Format de réponse attendu (JSON) :**
+{
+  "weeks": [
+    {
+      "week_number": 1,
+      "focus": "Focus de la semaine",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Titre de la séance",
+          "intensity": "faible | modérée | élevée",
+          "description": "Description détaillée de la séance",
+          "exercises": [
+            {
+              "name": "Nom de l'exercice",
+              "details": "Détails de l'exercice (durée, répétitions, etc.)"
+            }
+          ],
+        }
+      ]
+    }
+  ]
+}
+
+Réponds uniquement avec le JSON, sans texte additionnel.

@@ -57,7 +57,7 @@ export default function PlanScreen() {
       <Modal
         visible={showCreateForm}
         animationType="slide"
-        transparent={false}
+        transparent={true}
         statusBarTranslucent
       >
         <View style={styles.modalContainer}>
@@ -137,6 +137,24 @@ export default function PlanScreen() {
               </View>
 
               <View style={styles.infoItem}>
+                <Ionicons name="resize-outline" size={20} color="#FF6B35" />
+                <Text style={styles.infoLabel}>Distance</Text>
+                <Text style={styles.infoValue}>
+                  {planData.course_km} km
+                </Text>
+              </View>
+
+              <View style={styles.infoItem}>
+                <Ionicons name="trending-up-outline" size={20} color="#FF6B35" />
+                <Text style={styles.infoLabel}>D+</Text>
+                <Text style={styles.infoValue}>
+                  {planData.course_elevation} m
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.infoGrid}>
+              <View style={styles.infoItem}>
                 <Ionicons name="calendar-outline" size={20} color="#FF6B35" />
                 <Text style={styles.infoLabel}>Fréquence</Text>
                 <Text style={styles.infoValue}>
@@ -151,6 +169,8 @@ export default function PlanScreen() {
                   {planData.duration} sem.
                 </Text>
               </View>
+
+              <View style={styles.infoItem} />
             </View>
 
             <View style={styles.dateSection}>

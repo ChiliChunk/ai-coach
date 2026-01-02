@@ -5,6 +5,8 @@ const TRAINING_PLAN_KEY = '@training_plan';
 export interface TrainingPlan {
   course_label: string;
   course_type: string;
+  course_km: string;
+  course_elevation: string;
   frequency: string;
   duration: string;
   createdAt: string;
