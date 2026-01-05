@@ -1,0 +1,672 @@
+{
+  "weeks": [
+    {
+      "week_number": 1,
+      "focus": "Reprise et préparation générale (Volume)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "VMA Courte",
+          "intensity": "élevée",
+          "description": "Séance de vitesse pour réveiller le système cardiovasculaire.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing progressif"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "2 séries de 8x(30 sec vite / 30 sec lent). R=3 min entre les séries."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing lent"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing Fondamental + Renforcement",
+          "intensity": "faible",
+          "description": "Endurance fondamentale suivie de gainage.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "45 min à 65-70% FCM (aisance respiratoire)"
+            },
+            {
+              "name": "Renforcement",
+              "details": "15 min gainage (planche, chaise, squats)"
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Fartlek Nature",
+          "intensity": "modérée",
+          "description": "Jeu d'allure en nature sur terrain vallonné.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "15 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "3 blocs de 8 min où l'on accélère dans les montées et récupère dans les descentes."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue",
+          "intensity": "modérée",
+          "description": "Première sortie longue pour habituer le corps à la durée.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h15 sur terrain vallonné. Rythme endurance. Marcher si pente raide."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 2,
+      "focus": "Développement VMA et Force",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Côtes Courtes",
+          "intensity": "élevée",
+          "description": "Travail de puissance musculaire et cardiaque.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing + gammes"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "10x (45 sec montée dynamique / retour trot descente)."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "15 min footing lent"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Endurance Fondamentale",
+          "intensity": "faible",
+          "description": "Récupération active.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "50 min à 65-70% FCM"
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Seuil (Tempo)",
+          "intensity": "élevée",
+          "description": "Travail de maintien d'allure soutenue.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "3 x 8 min à 85% FCM (allure semi/15km). R=2 min trot."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue Trail",
+          "intensity": "modérée",
+          "description": "Augmentation du volume.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h30 en terrain varié. Chercher environ 400m D+. Gestion de l'effort en côte."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 3,
+      "focus": "Assimilation (Semaine allégée)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Rappel VMA",
+          "intensity": "modérée",
+          "description": "Entretien de la vitesse sans trop de fatigue.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "10 x (30 sec vite / 30 sec lent)"
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing Cool",
+          "intensity": "faible",
+          "description": "Pure récupération.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "45 min très souple, terrain plat."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Endurance active",
+          "intensity": "modérée",
+          "description": "Petite variation d'allure.",
+          "exercises": [
+            {
+              "name": "Séance",
+              "details": "50 min dont 15 min à allure marathon au milieu."
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue Allégée",
+          "intensity": "modérée",
+          "description": "Maintien de l'habitude de la sortie longue mais durée réduite.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h15 en nature, allure discussion."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 4,
+      "focus": "Développement Spécifique Trail (D+)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Côtes Moyennes",
+          "intensity": "élevée",
+          "description": "Travail spécifique trail.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "8 x (1min30 montée soutenue / retour trot)."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "15 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing + Gainage",
+          "intensity": "faible",
+          "description": "Endurance et renforcement tronc.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "50 min souple"
+            },
+            {
+              "name": "Renforcement",
+              "details": "20 min circuit training (fentes, chaise, gainage dynamique)"
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Seuil Long",
+          "intensity": "élevée",
+          "description": "Augmenter la capacité à tenir un effort intense.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "3 x 10 min à 85-88% FCM. R=2min30 trot."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue Spécifique",
+          "intensity": "modérée",
+          "description": "Augmentation durée et dénivelé.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h45 avec environ 500-600m D+. Alternance marche/course en montée."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 5,
+      "focus": "Volume et Casse de fibres",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "VMA Mixte",
+          "intensity": "élevée",
+          "description": "Mélange court et long.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "2 séries de (4x 200m + 1x 800m). R=30sec sur les 200m, R=2min après le 800m."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Endurance",
+          "intensity": "faible",
+          "description": "Footing de récupération.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "1h00 allure souple."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Travail en Descente",
+          "intensity": "modérée",
+          "description": "Préparation musculaire excentrique (casse de fibres).",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "25 min footing pour monter sur un point haut."
+            },
+            {
+              "name": "Corps de séance",
+              "details": "3 descentes techniques de 3-4 min à allure soutenue. Remontée cool."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Rando-Course",
+          "intensity": "modérée",
+          "description": "Gros volume à faible intensité.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "2h15. Objectif: temps passé sur les jambes. D+ 700m. Tester nutrition."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 6,
+      "focus": "Intensité Spécifique (Semaine clé)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Seuil en Côte",
+          "intensity": "élevée",
+          "description": "Combiner force et endurance aérobie.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "4 x 6 min en montée régulière (pente 5-8%) à allure seuil. Redescente souple."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "15 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing Récupération",
+          "intensity": "faible",
+          "description": "Assimiler la séance de côtes.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "50 min très lent."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Fartlek Pyramidal",
+          "intensity": "élevée",
+          "description": "Variations d'allures.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "1-2-3-4-3-2-1 min vite (R=temps d'effort en trot)."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue Choc",
+          "intensity": "modérée",
+          "description": "La plus grosse sortie de la prépa (durée).",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "2h45 à 3h00. Viser 800-1000m D+. Tester matériel course complet (sac, chaussures, ravito)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 7,
+      "focus": "Volume Max et Simulation",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "VMA Longue",
+          "intensity": "élevée",
+          "description": "Soutien VMA.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "6 x 3 min à 90-95% VMA. R=1min30."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing",
+          "intensity": "faible",
+          "description": "Footing d'entretien.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "1h00 cool sur terrain vallonné."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Allure Spécifique Trail",
+          "intensity": "modérée",
+          "description": "Travail aux allures de course.",
+          "exercises": [
+            {
+              "name": "Corps de séance",
+              "details": "1h15 au total incluant 2 x 15 min à l'allure cible de la course (ressenti)."
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Dernière Sortie Longue",
+          "intensity": "modérée",
+          "description": "Dernier gros effort en volume. On commence à réduire légèrement la durée vs semaine 6.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "2h00 à 2h15. Terrain technique. D+ 800m."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 8,
+      "focus": "Début de l'Affûtage (Tapering)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Côtes Explosives",
+          "intensity": "élevée",
+          "description": "Garder du dynamisme mais volume réduit.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "8 x 30 sec en côte à fond. R=1min30 marche."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "15 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing",
+          "intensity": "faible",
+          "description": "Récupération.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "45 min très souple."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Seuil court",
+          "intensity": "modérée",
+          "description": "Rappel d'allure sans fatiguer.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "2 x 8 min seuil. R=2 min."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min"
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie Longue Réduite",
+          "intensity": "modérée",
+          "description": "Baisse significative du volume (-30/40%).",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h30 en nature. Rythme tranquille, quelques accélérations courtes (30sec) pour le plaisir."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 9,
+      "focus": "Affûtage et Fraîcheur",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Rappel VMA léger",
+          "intensity": "modérée",
+          "description": "Juste pour tourner les jambes.",
+          "exercises": [
+            {
+              "name": "Échauffement",
+              "details": "20 min footing"
+            },
+            {
+              "name": "Corps de séance",
+              "details": "8 x (30 sec vite / 30 sec lent). Pas à fond."
+            },
+            {
+              "name": "Retour au calme",
+              "details": "10 min footing"
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Footing 40'",
+          "intensity": "faible",
+          "description": "Entretien aérobie.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "40 min cool."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Allure course",
+          "intensity": "modérée",
+          "description": "Petit rappel neuro-musculaire.",
+          "exercises": [
+            {
+              "name": "Séance",
+              "details": "45 min dont 2 blocs de 5 min allure course."
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "Sortie nature courte",
+          "intensity": "faible",
+          "description": "Dernière sortie de plus d'une heure.",
+          "exercises": [
+            {
+              "name": "Sortie",
+              "details": "1h00 - 1h10 max. Très facile."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "week_number": 10,
+      "focus": "Semaine de Course (Jus)",
+      "sessions": [
+        {
+          "session_number": 1,
+          "title": "Décrassage / Activation",
+          "intensity": "faible",
+          "description": "En début de semaine (mardi).",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "30 à 40 min footing lent + 4 lignes droites (accélérations progressives)."
+            }
+          ]
+        },
+        {
+          "session_number": 2,
+          "title": "Repos ou Mobilité",
+          "intensity": "faible",
+          "description": "Repos complet ou étirements très légers.",
+          "exercises": [
+            {
+              "name": "Activité",
+              "details": "Repos complet conseillé ou 20 min marche."
+            }
+          ]
+        },
+        {
+          "session_number": 3,
+          "title": "Veille de course (Optionnel)",
+          "intensity": "faible",
+          "description": "Réveil musculaire très court.",
+          "exercises": [
+            {
+              "name": "Footing",
+              "details": "20 min trot très lent + 2 petites accélérations pour vérifier les sensations."
+            }
+          ]
+        },
+        {
+          "session_number": 4,
+          "title": "COURSE : TOTO",
+          "intensity": "élevée",
+          "description": "Jour J - Objectif 33km 1300D+",
+          "exercises": [
+            {
+              "name": "Course",
+              "details": "Gestion de l'effort : partir prudemment, bien s'alimenter/s'hydrater dès la 1ère heure."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
