@@ -49,7 +49,7 @@ export const getMockTrainingPlan = async (req: Request, res: Response) => {
 
     console.log('Mock plan requested with data:', { course_label, course_type, course_km, course_elevation, frequency, duration });
 
-    const mockDataPath = path.join(__dirname, '../prompts/mock/gemini_answer.json');
+    const mockDataPath = path.join(__dirname, '../mock/gemini_answer.json');
     const mockData = fs.readFileSync(mockDataPath, 'utf-8');
     const trainingPlan = JSON.parse(mockData);
 
