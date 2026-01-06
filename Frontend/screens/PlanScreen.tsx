@@ -4,6 +4,7 @@ import { Ionicons, AntDesign } from '@expo/vector-icons';
 import CreatePlanForm from '../components/CreatePlanForm';
 import { storageService, TrainingPlan } from '../services/storageService';
 import { API_CONFIG } from '../config/api.config';
+import stravaService from '../services/stravaService';
 
 interface Exercise {
   name: string;
@@ -86,6 +87,8 @@ export default function PlanScreen() {
 
     setGeneratingWorkouts(true);
     try {
+      const userId = await stravaService.getUserId();
+      
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.TRAINING.MOCK}`, {
         method: 'POST',
         headers: {
@@ -98,6 +101,7 @@ export default function PlanScreen() {
           course_elevation: planData.course_elevation,
           frequency: planData.frequency,
           duration: planData.duration,
+          userId,
         }),
       });
 

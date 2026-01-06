@@ -55,7 +55,7 @@ class StravaService {
   /**
    * Génère un ID utilisateur unique pour cette session
    */
-  private async getUserId(): Promise<string> {
+  async getUserId(): Promise<string> {
     if (this.userId) return this.userId;
 
     let userId = await AsyncStorage.getItem(USER_ID_KEY);

@@ -3,7 +3,7 @@ import stravaService from '../services/stravaService';
 
 // Store de tokens temporaire (en production, utiliser une base de données)
 // Clé: userId, Valeur: tokens
-const userTokensStore = new Map<string, {
+export const userTokensStore = new Map<string, {
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
@@ -246,6 +246,33 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * Helper pour récupérer un access token valide pour un utilisateur
+ */
+export const getValidAccessToken = async (userId: string): Promise<string | null> => {
+  const userTokens = userTokensStore.get(userId);
+
+  if (!userTokens) {
+    return null;
+  }
+
+  // Vérifier si le token est expiré et le rafraîchir si nécessaire
+  if (stravaService.isTokenExpired(userTokens.expiresAt)) {
+    try {
+      const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
+      userTokens.accessToken = tokenResponse.access_token;
+      userTokens.refreshToken = tokenResponse.refresh_token;
+      userTokens.expiresAt = tokenResponse.expires_at;
+      userTokensStore.set(userId, userTokens);
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      return null;
+    }
+  }
+
+  return userTokens.accessToken;
 };
 
 /**

@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import config from '../config/config';
 import fs from 'fs';
 import path from 'path';
+import { StravaActivity } from './stravaService';
 
 interface TrainingPlanInput {
   course_label: string;
@@ -10,6 +11,7 @@ interface TrainingPlanInput {
   course_elevation: string;
   frequency: string;
   duration: string;
+  activities?: StravaActivity[];
 }
 
 interface TrainingSession {
@@ -68,8 +70,35 @@ class GeminiService {
     );
   }
 
+  private formatActivities(activities?: StravaActivity[]): string {
+    if (!activities || activities.length === 0) {
+      return 'Aucune activité récente disponible';
+    }
+
+    const formatted = activities.map((activity, index) => {
+      const date = new Date(activity.start_date_local).toLocaleDateString('fr-FR');
+      const distanceKm = (activity.distance / 1000).toFixed(2);
+      const durationMin = Math.round(activity.moving_time / 60);
+      const paceMinPerKm = activity.distance > 0 
+        ? Math.round((activity.moving_time / 60) / (activity.distance / 1000))
+        : 0;
+      const elevationGain = Math.round(activity.total_elevation_gain);
+      
+      return `${index + 1}. ${activity.name} (${date})\n` +
+             `   - Type: ${activity.sport_type}\n` +
+             `   - Distance: ${distanceKm} km\n` +
+             `   - Durée: ${durationMin} min\n` +
+             `   - Allure moyenne: ${paceMinPerKm} min/km\n` +
+             `   - Dénivelé: ${elevationGain} m` +
+             (activity.average_heartrate ? `\n   - FC moyenne: ${Math.round(activity.average_heartrate)} bpm` : '');
+    }).join('\n\n');
+
+    return `Activités récentes de l'utilisateur:\n\n${formatted}`;
+  }
+
   private generateUserPrompt(planData: TrainingPlanInput): string {
     const courseTypeLabel = planData.course_type === 'road_running' ? 'course sur route' : 'trail';
+    const activitiesText = this.formatActivities(planData.activities);
 
     return this.userPromptTemplate
       .replace(/\{\{course_label\}\}/g, planData.course_label)
@@ -79,7 +108,7 @@ class GeminiService {
       .replace(/\{\{frequency\}\}/g, planData.frequency)
       .replace(/\{\{duration\}\}/g, planData.duration)
       .replace(/\{\{course_type_value\}\}/g, planData.course_type)
-      .replace(/\{\{activities\}\}/g, 'Aucune activité récente');
+      .replace(/\{\{activities\}\}/g, activitiesText);
   }
 
   async generateTrainingPlan(planData: TrainingPlanInput): Promise<TrainingPlanResponse> {
