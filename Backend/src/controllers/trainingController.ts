@@ -60,7 +60,7 @@ export const generateTrainingPlan = async (req: Request, res: Response) => {
 export const getMockTrainingPlan = async (req: Request, res: Response) => {
   try {
     const { course_label, course_type, course_km, course_elevation, frequency, duration } = req.body;
-
+    console.log(req.body)
     if (!course_label || !course_type || !course_km || !course_elevation || !frequency || !duration) {
       return res.status(400).json({
         success: false,
@@ -69,6 +69,8 @@ export const getMockTrainingPlan = async (req: Request, res: Response) => {
     }
 
     console.log('Mock plan requested with data:', { course_label, course_type, course_km, course_elevation, frequency, duration });
+
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     const mockDataPath = path.join(__dirname, '../mock/gemini_answer.json');
     const mockData = fs.readFileSync(mockDataPath, 'utf-8');

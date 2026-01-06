@@ -1,13 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import stravaService from '../services/stravaService';
-
-// Store de tokens temporaire (en production, utiliser une base de données)
-// Clé: userId, Valeur: tokens
-export const userTokensStore = new Map<string, {
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: number;
-}>();
+import tokenStorage from '../services/tokenStorageService';
 
 /**
  * Retourne la configuration publique de Strava
@@ -44,8 +37,7 @@ export const exchangeToken = async (req: Request, res: Response, next: NextFunct
 
     const tokenResponse = await stravaService.exchangeCodeForToken(code);
 
-    // Stocker les tokens pour l'utilisateur
-    userTokensStore.set(userId, {
+    tokenStorage.set(userId, {
       accessToken: tokenResponse.access_token,
       refreshToken: tokenResponse.refresh_token,
       expiresAt: tokenResponse.expires_at,
@@ -76,7 +68,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (!userTokens) {
       res.status(401).json({ error: 'User not authenticated' });
@@ -85,8 +77,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
     const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
 
-    // Mettre à jour les tokens
-    userTokensStore.set(userId, {
+    tokenStorage.set(userId, {
       accessToken: tokenResponse.access_token,
       refreshToken: tokenResponse.refresh_token,
       expiresAt: tokenResponse.expires_at,
@@ -112,20 +103,20 @@ export const getAthlete = async (req: Request, res: Response, next: NextFunction
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (!userTokens) {
       res.status(401).json({ error: 'User not authenticated' });
       return;
     }
 
-    // Vérifier si le token est expiré et le rafraîchir si nécessaire
     if (stravaService.isTokenExpired(userTokens.expiresAt)) {
       const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-      userTokens.accessToken = tokenResponse.access_token;
-      userTokens.refreshToken = tokenResponse.refresh_token;
-      userTokens.expiresAt = tokenResponse.expires_at;
-      userTokensStore.set(userId, userTokens);
+      tokenStorage.set(userId, {
+        accessToken: tokenResponse.access_token,
+        refreshToken: tokenResponse.refresh_token,
+        expiresAt: tokenResponse.expires_at,
+      });
     }
 
     const athlete = await stravaService.getAthlete(userTokens.accessToken);
@@ -147,20 +138,20 @@ export const getActivities = async (req: Request, res: Response, next: NextFunct
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (!userTokens) {
       res.status(401).json({ error: 'User not authenticated' });
       return;
     }
 
-    // Vérifier si le token est expiré et le rafraîchir si nécessaire
     if (stravaService.isTokenExpired(userTokens.expiresAt)) {
       const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-      userTokens.accessToken = tokenResponse.access_token;
-      userTokens.refreshToken = tokenResponse.refresh_token;
-      userTokens.expiresAt = tokenResponse.expires_at;
-      userTokensStore.set(userId, userTokens);
+      tokenStorage.set(userId, {
+        accessToken: tokenResponse.access_token,
+        refreshToken: tokenResponse.refresh_token,
+        expiresAt: tokenResponse.expires_at,
+      });
     }
 
     const pageNum = page ? parseInt(page as string, 10) : 1;
@@ -190,20 +181,20 @@ export const getActivity = async (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (!userTokens) {
       res.status(401).json({ error: 'User not authenticated' });
       return;
     }
 
-    // Vérifier si le token est expiré et le rafraîchir si nécessaire
     if (stravaService.isTokenExpired(userTokens.expiresAt)) {
       const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-      userTokens.accessToken = tokenResponse.access_token;
-      userTokens.refreshToken = tokenResponse.refresh_token;
-      userTokens.expiresAt = tokenResponse.expires_at;
-      userTokensStore.set(userId, userTokens);
+      tokenStorage.set(userId, {
+        accessToken: tokenResponse.access_token,
+        refreshToken: tokenResponse.refresh_token,
+        expiresAt: tokenResponse.expires_at,
+      });
     }
 
     const activity = await stravaService.getActivity(
@@ -228,18 +219,16 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (userTokens) {
-      // Révoquer le token sur Strava
       try {
         await stravaService.revokeToken(userTokens.accessToken);
       } catch (error) {
         console.error('Error revoking token:', error);
       }
 
-      // Supprimer les tokens du store
-      userTokensStore.delete(userId);
+      tokenStorage.delete(userId);
     }
 
     res.json({ message: 'Logged out successfully' });
@@ -252,20 +241,21 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
  * Helper pour récupérer un access token valide pour un utilisateur
  */
 export const getValidAccessToken = async (userId: string): Promise<string | null> => {
-  const userTokens = userTokensStore.get(userId);
+  const userTokens = tokenStorage.get(userId);
 
   if (!userTokens) {
     return null;
   }
 
-  // Vérifier si le token est expiré et le rafraîchir si nécessaire
   if (stravaService.isTokenExpired(userTokens.expiresAt)) {
     try {
       const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-      userTokens.accessToken = tokenResponse.access_token;
-      userTokens.refreshToken = tokenResponse.refresh_token;
-      userTokens.expiresAt = tokenResponse.expires_at;
-      userTokensStore.set(userId, userTokens);
+      tokenStorage.set(userId, {
+        accessToken: tokenResponse.access_token,
+        refreshToken: tokenResponse.refresh_token,
+        expiresAt: tokenResponse.expires_at,
+      });
+      return tokenResponse.access_token;
     } catch (error) {
       console.error('Error refreshing token:', error);
       return null;
@@ -287,25 +277,25 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
       return;
     }
 
-    const userTokens = userTokensStore.get(userId);
+    const userTokens = tokenStorage.get(userId);
 
     if (!userTokens) {
       res.json({ authenticated: false });
       return;
     }
 
-    // Vérifier si le token peut être rafraîchi
     if (stravaService.isTokenExpired(userTokens.expiresAt)) {
       try {
         const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-        userTokens.accessToken = tokenResponse.access_token;
-        userTokens.refreshToken = tokenResponse.refresh_token;
-        userTokens.expiresAt = tokenResponse.expires_at;
-        userTokensStore.set(userId, userTokens);
+        tokenStorage.set(userId, {
+          accessToken: tokenResponse.access_token,
+          refreshToken: tokenResponse.refresh_token,
+          expiresAt: tokenResponse.expires_at,
+        });
         res.json({ authenticated: true });
         return;
       } catch (error) {
-        userTokensStore.delete(userId);
+        tokenStorage.delete(userId);
         res.json({ authenticated: false });
         return;
       }

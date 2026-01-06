@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TRAINING_PLAN_KEY = '@training_plan';
+const TRAINING_SESSIONS_KEY = '@training_sessions';
 
 export interface TrainingPlan {
   course_label: string;
@@ -10,6 +11,30 @@ export interface TrainingPlan {
   frequency: string;
   duration: string;
   createdAt: string;
+}
+
+export interface Exercise {
+  name: string;
+  details: string;
+}
+
+export interface Session {
+  session_number: number;
+  title: string;
+  intensity: string;
+  description: string;
+  exercises: Exercise[];
+}
+
+export interface Week {
+  week_number: number;
+  focus: string;
+  sessions: Session[];
+}
+
+export interface TrainingSchedule {
+  weeks: Week[];
+  savedAt?: string;
 }
 
 export const storageService = {
@@ -65,6 +90,48 @@ export const storageService = {
     } catch (error) {
       console.error('Error checking training plan:', error);
       return false;
+    }
+  },
+
+  /**
+   * Save training sessions to local storage
+   */
+  async saveTrainingSessions(sessions: TrainingSchedule): Promise<void> {
+    try {
+      const data = {
+        ...sessions,
+        savedAt: new Date().toISOString(),
+      };
+      const jsonValue = JSON.stringify(data);
+      await AsyncStorage.setItem(TRAINING_SESSIONS_KEY, jsonValue);
+    } catch (error) {
+      console.error('Error saving training sessions:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get training sessions from local storage
+   */
+  async getTrainingSessions(): Promise<TrainingSchedule | null> {
+    try {
+      const jsonValue = await AsyncStorage.getItem(TRAINING_SESSIONS_KEY);
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (error) {
+      console.error('Error getting training sessions:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Delete training sessions from local storage
+   */
+  async deleteTrainingSessions(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(TRAINING_SESSIONS_KEY);
+    } catch (error) {
+      console.error('Error deleting training sessions:', error);
+      throw error;
     }
   },
 };

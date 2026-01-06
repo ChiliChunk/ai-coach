@@ -2,32 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import CreatePlanForm from '../components/CreatePlanForm';
-import { storageService, TrainingPlan } from '../services/storageService';
+import { storageService, TrainingPlan, TrainingSchedule } from '../services/storageService';
 import { API_CONFIG } from '../config/api.config';
 import stravaService from '../services/stravaService';
-
-interface Exercise {
-  name: string;
-  details: string;
-}
-
-interface Session {
-  session_number: number;
-  title: string;
-  intensity: string;
-  description: string;
-  exercises: Exercise[];
-}
-
-interface Week {
-  week_number: number;
-  focus: string;
-  sessions: Session[];
-}
-
-interface TrainingSchedule {
-  weeks: Week[];
-}
 
 export default function PlanScreen() {
   const [hasPlan, setHasPlan] = useState(false);
@@ -47,6 +24,11 @@ export default function PlanScreen() {
       if (plan) {
         setPlanData(plan);
         setHasPlan(true);
+      }
+      
+      const sessions = await storageService.getTrainingSessions();
+      if (sessions) {
+        setTrainingSchedule(sessions);
       }
     } catch (error) {
       console.error('Erreur lors du chargement du plan:', error);
@@ -72,7 +54,9 @@ export default function PlanScreen() {
   const handleDeletePlan = async () => {
     try {
       await storageService.deleteTrainingPlan();
+      await storageService.deleteTrainingSessions();
       setPlanData(null);
+      setTrainingSchedule(null);
       setHasPlan(false);
     } catch (error) {
       console.error('Erreur lors de la suppression du plan:', error);
@@ -88,13 +72,7 @@ export default function PlanScreen() {
     setGeneratingWorkouts(true);
     try {
       const userId = await stravaService.getUserId();
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.TRAINING.MOCK}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      var data = {
           course_label: planData.course_label,
           course_type: planData.course_type,
           course_km: planData.course_km,
@@ -102,13 +80,21 @@ export default function PlanScreen() {
           frequency: planData.frequency,
           duration: planData.duration,
           userId,
-        }),
+        }
+      console.log('Request data for training plan generation:', data);
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.TRAINING.MOCK}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (result.success) {
         setTrainingSchedule(result.data);
+        await storageService.saveTrainingSessions(result.data);
         Alert.alert('Succès', 'Les séances ont été générées avec succès!');
         console.log('Training plan generated:', result.data);
       } else {
