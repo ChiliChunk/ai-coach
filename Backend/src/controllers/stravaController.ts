@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import stravaService from '../services/stravaService';
-import tokenStore from '../services/tokenStore';
-import { AuthRequest } from '../middleware/auth';
+
+// Store de tokens temporaire (en production, utiliser une base de données)
+// Clé: userId, Valeur: tokens
+export const userTokensStore = new Map<string, {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+}>();
 
 /**
  * Retourne la configuration publique de Strava
@@ -18,10 +24,9 @@ export const getConfig = async (_req: Request, res: Response, next: NextFunction
 /**
  * Échange le code d'autorisation contre des tokens
  */
-export const exchangeToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+export const exchangeToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { code } = req.body;
-    const userId = req.user?.uid;
+    const { code, userId } = req.body;
 
     console.log('Exchange token request received');
     console.log('User ID:', userId);
@@ -33,14 +38,14 @@ export const exchangeToken = async (req: AuthRequest, res: Response, next: NextF
     }
 
     if (!userId) {
-      res.status(401).json({ error: 'User not authenticated' });
+      res.status(400).json({ error: 'User ID is required' });
       return;
     }
 
     const tokenResponse = await stravaService.exchangeCodeForToken(code);
 
-    // Stocker les tokens dans Firestore
-    await tokenStore.setTokens(userId, {
+    // Stocker les tokens pour l'utilisateur
+    userTokensStore.set(userId, {
       accessToken: tokenResponse.access_token,
       refreshToken: tokenResponse.refresh_token,
       expiresAt: tokenResponse.expires_at,
@@ -247,7 +252,7 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
  * Helper pour récupérer un access token valide pour un utilisateur
  */
 export const getValidAccessToken = async (userId: string): Promise<string | null> => {
-  const userTokens = await tokenStore.getTokens(userId);
+  const userTokens = userTokensStore.get(userId);
 
   if (!userTokens) {
     return null;
@@ -257,12 +262,10 @@ export const getValidAccessToken = async (userId: string): Promise<string | null
   if (stravaService.isTokenExpired(userTokens.expiresAt)) {
     try {
       const tokenResponse = await stravaService.refreshAccessToken(userTokens.refreshToken);
-      await tokenStore.setTokens(userId, {
-        accessToken: tokenResponse.access_token,
-        refreshToken: tokenResponse.refresh_token,
-        expiresAt: tokenResponse.expires_at,
-      });
-      return tokenResponse.access_token;
+      userTokens.accessToken = tokenResponse.access_token;
+      userTokens.refreshToken = tokenResponse.refresh_token;
+      userTokens.expiresAt = tokenResponse.expires_at;
+      userTokensStore.set(userId, userTokens);
     } catch (error) {
       console.error('Error refreshing token:', error);
       return null;
