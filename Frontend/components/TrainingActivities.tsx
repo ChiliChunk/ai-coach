@@ -6,6 +6,7 @@ import { TrainingSchedule, Exercise, Session, Week } from '../services/storageSe
 interface TrainingActivitiesProps {
   trainingSchedule: TrainingSchedule;
   onToggleDone: (weekNumber: number, sessionNumber: number) => void;
+  onFirstUncompletedLayout?: (y: number) => void;
 }
 
 interface SessionCardProps {
@@ -15,9 +16,10 @@ interface SessionCardProps {
   onToggleExpanded: () => void;
   onToggleDone: () => void;
   getIntensityColor: (intensity: string) => string;
+  onLayout?: (y: number) => void;
 }
 
-function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onToggleDone, getIntensityColor }: SessionCardProps) {
+function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onToggleDone, getIntensityColor, onLayout }: SessionCardProps) {
   const animatedValue = useRef(new Animated.Value(session.done ? 1 : 0)).current;
 
   useEffect(() => {
@@ -44,7 +46,14 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
   });
 
   return (
-    <Animated.View style={[styles.sessionCard, { backgroundColor, borderColor, opacity }]}>
+    <Animated.View 
+      style={[styles.sessionCard, { backgroundColor, borderColor, opacity }]}
+      onLayout={(event) => {
+        if (onLayout) {
+          onLayout(event.nativeEvent.layout.y);
+        }
+      }}
+    >
       <TouchableOpacity 
         onPress={onToggleExpanded}
         onLongPress={onToggleDone}
@@ -106,8 +115,9 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
   );
 }
 
-export default function TrainingActivities({ trainingSchedule, onToggleDone }: TrainingActivitiesProps) {
+export default function TrainingActivities({ trainingSchedule, onToggleDone, onFirstUncompletedLayout }: TrainingActivitiesProps) {
   const [expandedSessions, setExpandedSessions] = useState<Set<string>>(new Set());
+  const [firstUncompletedFound, setFirstUncompletedFound] = useState(false);
 
   const getIntensityColor = (intensity: string) => {
     switch (intensity.toLowerCase()) {
@@ -138,6 +148,11 @@ export default function TrainingActivities({ trainingSchedule, onToggleDone }: T
   const renderSession = (session: Session, weekNumber: number) => {
     const sessionId = `week-${weekNumber}-session-${session.session_number}`;
     const isExpanded = expandedSessions.has(sessionId);
+    const isFirstUncompleted = !firstUncompletedFound && !session.done;
+
+    if (isFirstUncompleted) {
+      setFirstUncompletedFound(true);
+    }
 
     return (
       <SessionCard
@@ -148,6 +163,7 @@ export default function TrainingActivities({ trainingSchedule, onToggleDone }: T
         onToggleExpanded={() => toggleSession(weekNumber, session.session_number)}
         onToggleDone={() => onToggleDone(weekNumber, session.session_number)}
         getIntensityColor={getIntensityColor}
+        onLayout={isFirstUncompleted ? onFirstUncompletedLayout : undefined}
       />
     );
   };

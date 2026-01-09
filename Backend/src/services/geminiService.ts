@@ -49,8 +49,7 @@ interface TrainingPlanResponse {
 
 class GeminiService {
   private genAI: GoogleGenerativeAI;
-  private systemPrompt: string;
-  private userPromptTemplate: string;
+  private promptTemplate: string;
 
   constructor() {
     if (!config.geminiApiKey) {
@@ -59,13 +58,8 @@ class GeminiService {
 
     this.genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
-    this.systemPrompt = fs.readFileSync(
-      path.join(__dirname, '../prompts/training-plan-system.txt'),
-      'utf-8'
-    );
-
-    this.userPromptTemplate = fs.readFileSync(
-      path.join(__dirname, '../prompts/training-plan-user.txt'),
+    this.promptTemplate = fs.readFileSync(
+      path.join(__dirname, '../prompts/training-plan.txt'),
       'utf-8'
     );
   }
@@ -96,11 +90,11 @@ class GeminiService {
     return `Activités récentes de l'utilisateur:\n\n${formatted}`;
   }
 
-  private generateUserPrompt(planData: TrainingPlanInput): string {
+  private generatePrompt(planData: TrainingPlanInput): string {
     const courseTypeLabel = planData.course_type === 'road_running' ? 'course sur route' : 'trail';
     const activitiesText = this.formatActivities(planData.activities);
 
-    return this.userPromptTemplate
+    return this.promptTemplate
       .replace(/\{\{course_label\}\}/g, planData.course_label)
       .replace(/\{\{course_km\}\}/g, planData.course_km)
       .replace(/\{\{course_elevation\}\}/g, planData.course_elevation)
@@ -114,8 +108,7 @@ class GeminiService {
   async generateTrainingPlan(planData: TrainingPlanInput): Promise<TrainingPlanResponse> {
     try {
       console.log('Generating training plan with data:', planData);
-      const userPrompt = this.generateUserPrompt(planData);
-      const fullPrompt = `${this.systemPrompt}\n\n${userPrompt}`;
+      const fullPrompt = this.generatePrompt(planData);
 
       console.log('Using Gemini model: gemini-2.0-flash-exp');
       const model = this.genAI.getGenerativeModel({
