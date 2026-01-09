@@ -32,6 +32,7 @@ export default function PlanScreen() {
   const [loading, setLoading] = useState(true);
   const [generatingWorkouts, setGeneratingWorkouts] = useState(false);
   const [trainingSchedule, setTrainingSchedule] = useState<TrainingSchedule | null>(null);
+  const [expandedSessions, setExpandedSessions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadPlan();
@@ -196,32 +197,66 @@ export default function PlanScreen() {
     }
   };
 
-  const renderSession = (session: Session, weekNumber: number) => (
-    <View key={`week-${weekNumber}-session-${session.session_number}`} style={styles.sessionCard}>
-      <View style={styles.sessionHeader}>
-        <View style={styles.sessionTitleRow}>
-          <Text style={styles.sessionNumber}>Séance {session.session_number}</Text>
-          <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(session.intensity) }]}>
-            <Text style={styles.intensityText}>{session.intensity}</Text>
-          </View>
-        </View>
-        <Text style={styles.sessionTitle}>{session.title}</Text>
-        <Text style={styles.sessionDescription}>{session.description}</Text>
-      </View>
+  const toggleSession = (weekNumber: number, sessionNumber: number) => {
+    const sessionId = `week-${weekNumber}-session-${sessionNumber}`;
+    setExpandedSessions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(sessionId)) {
+        newSet.delete(sessionId);
+      } else {
+        newSet.add(sessionId);
+      }
+      return newSet;
+    });
+  };
 
-      <View style={styles.exercisesContainer}>
-        {session.exercises.map((exercise, index) => (
-          <View key={`exercise-${index}`} style={styles.exerciseItem}>
-            <Ionicons name="fitness-outline" size={16} color="#FF6B35" />
-            <View style={styles.exerciseContent}>
-              <Text style={styles.exerciseName}>{exercise.name}</Text>
-              <Text style={styles.exerciseDetails}>{exercise.details}</Text>
+  const renderSession = (session: Session, weekNumber: number) => {
+    const sessionId = `week-${weekNumber}-session-${session.session_number}`;
+    const isExpanded = expandedSessions.has(sessionId);
+
+    return (
+      <TouchableOpacity 
+        key={sessionId} 
+        style={styles.sessionCard}
+        onPress={() => toggleSession(weekNumber, session.session_number)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.sessionHeader}>
+          <View style={styles.sessionTitleRow}>
+            <Text style={styles.sessionNumber}>Séance {session.session_number}</Text>
+            <View style={styles.sessionTitleRowRight}>
+              <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(session.intensity) }]}>
+                <Text style={styles.intensityText}>{session.intensity}</Text>
+              </View>
+              <Ionicons 
+                name={isExpanded ? "chevron-up" : "chevron-down"} 
+                size={20} 
+                color="#b0b0b0" 
+              />
             </View>
           </View>
-        ))}
-      </View>
-    </View>
-  );
+          <Text style={styles.sessionTitle}>{session.title}</Text>
+          <Text style={styles.sessionDescription} numberOfLines={isExpanded ? undefined : 2}>
+            {session.description}
+          </Text>
+        </View>
+
+        {isExpanded && (
+          <View style={styles.exercisesContainer}>
+            {session.exercises.map((exercise, index) => (
+              <View key={`exercise-${index}`} style={styles.exerciseItem}>
+                <Ionicons name="fitness-outline" size={16} color="#FF6B35" />
+                <View style={styles.exerciseContent}>
+                  <Text style={styles.exerciseName}>{exercise.name}</Text>
+                  <Text style={styles.exerciseDetails}>{exercise.details}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   const renderWeek = (week: Week) => (
     <View key={`week-${week.week_number}`} style={styles.weekContainer}>
@@ -551,6 +586,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+  },
+  sessionTitleRowRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   sessionNumber: {
     fontSize: 12,

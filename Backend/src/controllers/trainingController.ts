@@ -19,7 +19,7 @@ const filterActivitiesForLLM = (activities: StravaActivity[]): FilteredActivity[
   }));
 };
 
-const getStravaActivities = async (userId: string | undefined): Promise<FilteredActivity[]> => {
+const getFilteredStravaActivities = async (userId: string | undefined): Promise<FilteredActivity[]> => {
   const activities: FilteredActivity[] = [];
   if (userId) {
     try {
@@ -51,7 +51,7 @@ export const generateTrainingPlan = async (req: Request, res: Response) => {
       });
     }
 
-    const activities = await getStravaActivities(userId);
+    const activities = await getFilteredStravaActivities(userId);
     const trainingPlan = await geminiService.generateTrainingPlan({
       course_label,
       course_type,
@@ -86,7 +86,7 @@ export const getMockTrainingPlan = async (req: Request, res: Response) => {
       });
     }
     console.log('Mock plan requested with data:', { course_label, course_type, course_km, course_elevation, frequency, duration, userId });
-    const activities = await getStravaActivities(userId);
+    const activities = await getFilteredStravaActivities(userId);
     console.log(`Retrieved ${activities.length} activities for mock plan generation`);    
     await new Promise(resolve => setTimeout(resolve, 5000));
 
