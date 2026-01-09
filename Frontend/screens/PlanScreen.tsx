@@ -33,6 +33,7 @@ export default function PlanScreen() {
   const [generatingWorkouts, setGeneratingWorkouts] = useState(false);
   const [trainingSchedule, setTrainingSchedule] = useState<TrainingSchedule | null>(null);
   const [expandedSessions, setExpandedSessions] = useState<Set<string>>(new Set());
+  const [isPlanExpanded, setIsPlanExpanded] = useState(false);
 
   useEffect(() => {
     loadPlan();
@@ -280,13 +281,24 @@ export default function PlanScreen() {
         </View>
 
         {planData && (
-          <View style={styles.compactCard}>
+          <TouchableOpacity 
+            style={styles.compactCard}
+            onPress={() => setIsPlanExpanded(!isPlanExpanded)}
+            activeOpacity={0.7}
+          >
             <View style={styles.courseTitleSection}>
               <Ionicons name="trophy" size={24} color="#FF6B35" />
               <Text style={styles.courseTitle}>{planData.course_label}</Text>
+              <Ionicons 
+                name={isPlanExpanded ? "chevron-up" : "chevron-down"} 
+                size={24} 
+                color="#b0b0b0" 
+              />
             </View>
 
-            <View style={styles.divider} />
+            {isPlanExpanded && (
+              <>
+                <View style={styles.divider} />
 
             <View style={styles.infoGrid}>
               <View style={styles.infoItem}>
@@ -344,7 +356,9 @@ export default function PlanScreen() {
                 })}
               </Text>
             </View>
-          </View>
+              </>
+            )}
+          </TouchableOpacity>
         )}
 
         {!trainingSchedule ? (
@@ -423,7 +437,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 15,
   },
   courseTitle: {
     fontSize: 22,
@@ -434,6 +447,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: 'rgba(252, 76, 2, 0.2)',
+    marginTop: 15,
     marginBottom: 15,
   },
   infoGrid: {
