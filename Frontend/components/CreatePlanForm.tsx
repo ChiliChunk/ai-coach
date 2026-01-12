@@ -100,26 +100,6 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
   const handleComplete = async () => {
     try {
       await storageService.saveTrainingPlan(formData);
-      
-      // Récupérer le userId pour envoyer au backend
-      const userId = await stravaService.getUserId();
-      
-      // Générer le plan d'entraînement
-      try {
-        const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.TRAINING.GENERATE}`;
-        console.log('Generating training plan with userId:', userId);
-        
-        const response = await axios.post(url, {
-          ...formData,
-          userId,
-        });
-        
-        console.log('Training plan generated successfully:', response.data);
-      } catch (apiError) {
-        console.error('Error generating training plan:', apiError);
-        // Continue même si la génération échoue pour l'instant
-      }
-      
       onComplete(formData);
     } catch (error) {
       Alert.alert(

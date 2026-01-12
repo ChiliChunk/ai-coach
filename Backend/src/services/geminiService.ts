@@ -64,35 +64,9 @@ class GeminiService {
     );
   }
 
-  private formatActivities(activities?: FilteredActivity[]): string {
-    if (!activities || activities.length === 0) {
-      return 'Aucune activité récente disponible';
-    }
-
-    const formatted = activities.map((activity, index) => {
-      const date = new Date(activity.start_date).toLocaleDateString('fr-FR');
-      const distanceKm = (activity.distance / 1000).toFixed(2);
-      const durationMin = Math.round(activity.moving_time / 60);
-      const paceMinPerKm = activity.distance > 0 
-        ? Math.round((activity.moving_time / 60) / (activity.distance / 1000))
-        : 0;
-      const elevationGain = Math.round(activity.total_elevation_gain);
-      
-      return `${index + 1}. ${activity.name} (${date})\n` +
-             `   - Type: ${activity.sport_type}\n` +
-             `   - Distance: ${distanceKm} km\n` +
-             `   - Durée: ${durationMin} min\n` +
-             `   - Allure moyenne: ${paceMinPerKm} min/km\n` +
-             `   - Dénivelé: ${elevationGain} m` +
-             (activity.average_heartrate ? `\n   - FC moyenne: ${Math.round(activity.average_heartrate)} bpm` : '');
-    }).join('\n\n');
-
-    return `Activités récentes de l'utilisateur:\n\n${formatted}`;
-  }
-
   private generatePrompt(planData: TrainingPlanInput): string {
     const courseTypeLabel = planData.course_type === 'road_running' ? 'course sur route' : 'trail';
-    const activitiesText = this.formatActivities(planData.activities);
+    const activitiesText = planData.activities?.toString() || '';
 
     return this.promptTemplate
       .replace(/\{\{course_label\}\}/g, planData.course_label)

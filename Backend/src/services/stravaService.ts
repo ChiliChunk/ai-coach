@@ -224,6 +224,45 @@ class StravaService {
       scopes: stravaConfig.scopes,
     };
   }
+
+  /**
+   * Filter activities for LLM processing
+   */
+  filterActivitiesForLLM(activities: StravaActivity[]): FilteredActivity[] {
+    return activities.map(activity => ({
+      name: activity.name,
+      distance: activity.distance/1000 + " km",
+      moving_time: activity.moving_time/60 + " min",
+      total_elevation_gain: activity.total_elevation_gain + " m",
+      type: activity.type,
+      sport_type: activity.sport_type,
+      start_date: activity.start_date,
+      average_speed: activity.average_speed * 3.6 + " km/h",
+      average_heartrate: activity.average_heartrate,
+    }));
+  }
+
+  /**
+   * Get filtered Strava activities for a user
+   */
+  async getFilteredStravaActivities(
+    userId: string | undefined,
+    getValidAccessToken: (userId: string) => Promise<string | null>
+  ): Promise<FilteredActivity[]> {
+    const activities: FilteredActivity[] = [];
+    if (userId) {
+      try {
+        const accessToken = await getValidAccessToken(userId);
+        if (accessToken) {
+          const fetchedActivities = await this.getActivities(accessToken, 1, 10);
+          return this.filterActivitiesForLLM(fetchedActivities);
+        }
+      } catch (error) {
+        // Continue sans les activités si la récupération échoue
+      }
+    }
+    return activities;
+  }
 }
 
 export default new StravaService();
