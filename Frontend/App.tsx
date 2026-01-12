@@ -74,7 +74,7 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" translucent={false} />
       <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="StravaLogin"
+        initialRouteName="MainTabs"
         screenOptions={{
           headerStyle: {
             backgroundColor: 'rgba(26, 26, 26, 0.98)',
