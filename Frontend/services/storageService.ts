@@ -10,6 +10,7 @@ export interface TrainingPlan {
   course_elevation: string;
   frequency: string;
   duration: string;
+  user_presentation: string;
   createdAt: string;
 }
 

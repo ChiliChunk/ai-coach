@@ -104,9 +104,9 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>STRAVA</Text>
-      <Text style={styles.title}>Connectez-vous à Strava</Text>
+      <Text style={styles.title}>Connectez-vous à Strava pour un plan d'entraînement personnalisé</Text>
       <Text style={styles.subtitle}>
-        Accédez à votre profil et vos activités
+        Connectez votre compte Strava pour synchroniser vos activités et obtenir des plans d'entraînement adaptés à votre niveau et vos objectifs.
       </Text>
 
       <TouchableOpacity

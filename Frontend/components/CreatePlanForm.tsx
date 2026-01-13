@@ -33,6 +33,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
     course_elevation: '',
     frequency: '',
     duration: '',
+    user_presentation: '',
   });
 
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -83,6 +84,12 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
       type: 'number' as const,
       placeholder: 'Ex: 8',
       unit: 'semaines',
+    },
+    {
+      id: 'user_presentation',
+      question: 'Présentez-vous en quelques mots',
+      type: 'multiline' as const,
+      placeholder: 'Mon temps au semi est 2h10, je m\'entraine depuis 2 ans...',
     },
     {
       id: 'strava_connect',
@@ -254,6 +261,22 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
                 />
               </View>
             )}
+
+            {question.type === 'multiline' && (
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  style={[styles.textInput, styles.multilineInput]}
+                  placeholder={question.placeholder || 'Entrez votre réponse'}
+                  placeholderTextColor="#666"
+                  value={formData[question.id as keyof typeof formData]}
+                  onChangeText={(value) => handleTextInput(question.id, value)}
+                  maxLength={300}
+                  multiline
+                  numberOfLines={6}
+                  textAlignVertical="top"
+                />
+              </View>
+            )}
           </View>
         ))}
       </Animated.View>
@@ -419,6 +442,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#ffffff',
     fontWeight: '500',
+  },
+  multilineInput: {
+    minHeight: 150,
+    paddingTop: 20,
   },
   stravaContainer: {
     flex: 1,
