@@ -72,16 +72,7 @@ class StravaService {
    * Récupère la configuration Strava depuis le backend
    */
   async getConfig(): Promise<StravaConfig> {
-    if (this.config) return this.config;
-
     try {
-      const cachedConfig = await AsyncStorage.getItem(STRAVA_CONFIG_KEY);
-      if (cachedConfig) {
-        this.config = JSON.parse(cachedConfig);
-        console.log('Loaded config from cache:', this.config);
-        return this.config!;
-      }
-
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.CONFIG}`;
       console.log('Fetching config from:', url);
 
@@ -101,6 +92,14 @@ class StravaService {
           status: error.response?.status,
         });
       }
+
+      const cachedConfig = await AsyncStorage.getItem(STRAVA_CONFIG_KEY);
+      if (cachedConfig) {
+        this.config = JSON.parse(cachedConfig);
+        console.log('Using cached config as fallback:', this.config);
+        return this.config!;
+      }
+
       throw new Error('Failed to fetch Strava configuration');
     }
   }

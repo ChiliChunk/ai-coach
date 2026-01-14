@@ -15,7 +15,7 @@ interface StravaConfig {
 const stravaConfig: StravaConfig = {
   clientId: process.env.STRAVA_CLIENT_ID || '',
   clientSecret: process.env.STRAVA_CLIENT_SECRET || '',
-  authorizationEndpoint: 'https://www.strava.com/oauth/authorize',
+  authorizationEndpoint: 'https://www.strava.com/oauth/mobile/authorize',
   tokenEndpoint: 'https://www.strava.com/oauth/token',
   revokeEndpoint: 'https://www.strava.com/oauth/deauthorize',
   apiBaseUrl: 'https://www.strava.com/api/v3',
