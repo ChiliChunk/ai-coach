@@ -80,6 +80,30 @@ class GeminiService {
       .replace(/\{\{activities\}\}/g, activitiesText);
   }
 
+  async generateTrainingPlanMock(planData: TrainingPlanInput): Promise<TrainingPlanResponse> {
+    try {
+      console.log('Generating mock training plan with data:', planData);
+      const fullPrompt = this.generatePrompt(planData);
+      console.log('Prompt initialized (unused in mock mode)');
+
+      const mockResponse = fs.readFileSync(
+        path.join(__dirname, '../mock/gemini_answer.json'),
+        'utf-8'
+      );
+
+      const trainingPlan: TrainingPlanResponse = JSON.parse(mockResponse);
+      console.log('Mock training plan loaded successfully');
+
+      return trainingPlan;
+    } catch (error) {
+      console.error('Error generating mock training plan:', error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to generate mock training plan: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
   async generateTrainingPlan(planData: TrainingPlanInput): Promise<TrainingPlanResponse> {
     try {
       console.log('Generating training plan with data:', planData);

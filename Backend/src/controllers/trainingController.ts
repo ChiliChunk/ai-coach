@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import geminiService from '../services/geminiService';
 import stravaService from '../services/stravaService';
 import { getValidAccessToken } from './stravaController';
-import fs from 'fs';
-import path from 'path';
 
 export const generateTrainingPlan = async (req: Request, res: Response) => {
   try {
@@ -54,9 +52,16 @@ export const getMockTrainingPlan = async (req: Request, res: Response) => {
     const filteredActivities = await stravaService.getFilteredStravaActivities(userId, getValidAccessToken);
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    const mockDataPath = path.join(__dirname, '../mock/gemini_answer.json');
-    const mockData = fs.readFileSync(mockDataPath, 'utf-8');
-    const trainingPlan = JSON.parse(mockData);
+    const trainingPlan = await geminiService.generateTrainingPlanMock({
+      course_label,
+      course_type,
+      course_km,
+      course_elevation,
+      frequency,
+      duration,
+      user_presentation,
+      activities: filteredActivities,
+    });
 
     return res.status(200).json({
       success: true,

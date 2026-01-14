@@ -26,6 +26,7 @@ export interface Session {
   description: string;
   exercises: Exercise[];
   done?: boolean;
+  optional?: boolean;
 }
 
 export interface Week {

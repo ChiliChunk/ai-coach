@@ -38,7 +38,7 @@ Génère un plan d'entraînement complet pour la course suivante :
           "title": "Titre de la séance",
           "intensity": "faible | modérée | élevée",
           "description": "Description détaillée de la séance",
-          "optionnal" : "True | False",
+          "optional" : "True | False",
           "exercises": [
             {
               "name": "Nom de l'exercice",

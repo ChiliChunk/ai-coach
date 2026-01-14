@@ -44,7 +44,11 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
   });
 
   return (
-    <Animated.View style={[styles.sessionCard, { backgroundColor, borderColor, opacity }]}>
+    <Animated.View style={[
+      styles.sessionCard,
+      { backgroundColor, borderColor, opacity },
+      session.optional && styles.sessionCardOptional
+    ]}>
       <TouchableOpacity 
         onPress={onToggleExpanded}
         onLongPress={onToggleDone}
@@ -225,6 +229,9 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 12,
     borderWidth: 1,
+  },
+  sessionCardOptional: {
+    borderStyle: 'dashed',
   },
   sessionCardDone: {
     backgroundColor: 'rgba(30, 40, 60, 0.5)',
