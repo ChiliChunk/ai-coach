@@ -44,11 +44,6 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
     outputRange: [0, contentHeight],
   });
 
-  const animatedOpacity = expandAnimation.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0, 0, 1],
-  });
-
   const backgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [colors.card, colors.backgroundSecondary],
@@ -70,11 +65,11 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
       styles.sessionCard,
       { backgroundColor, borderColor, opacity },
     ]}>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={onToggleExpanded}
         onLongPress={onToggleDone}
         delayLongPress={300}
-        activeOpacity={0.7}
+        activeOpacity={1}
       >
         <View style={styles.sessionHeader}>
           <View style={styles.sessionTitleRow}>
@@ -133,7 +128,7 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
               </View>
             ))}
           </View>
-          <Animated.View style={{ height: animatedHeight, opacity: animatedOpacity, overflow: 'hidden' }}>
+          <Animated.View style={{ height: animatedHeight, overflow: 'hidden' }}>
             <View style={styles.exercisesContainer}>
               {session.exercises.map((exercise, index) => (
                 <View key={`exercise-${index}`} style={styles.exerciseItem}>
