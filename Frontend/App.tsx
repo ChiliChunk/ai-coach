@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar } from 'react-native';
+import { StatusBar, View, Image, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import StravaProfileScreen from './screens/StravaProfileScreen';
 import PlanScreen from './screens/PlanScreen';
@@ -69,10 +69,35 @@ function MainTabs() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const appFadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(appFadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowSplash(false);
+      });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} translucent={false} />
-      <NavigationContainer>
+      <Animated.View style={[styles.appContainer, { opacity: appFadeAnim }]}>
+        <NavigationContainer>
       <Stack.Navigator
         initialRouteName="MainTabs"
         screenOptions={{
@@ -92,7 +117,37 @@ export default function App() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
-    </>
+        </NavigationContainer>
+      </Animated.View>
+      {showSplash && (
+        <Animated.View style={[styles.splashContainer, { opacity: fadeAnim }]}>
+          <Image
+            source={require('./assets/splash_screen.png')}
+            style={styles.splashImage}
+            resizeMode="contain"
+          />
+        </Animated.View>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  appContainer: {
+    flex: 1,
+  },
+  splashContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
+  splashImage: {
+    width: '100%',
+    height: '100%',
+  },
+});
