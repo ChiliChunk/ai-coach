@@ -8,6 +8,7 @@ interface Config {
   apiVersion: string;
   corsOrigin: string;
   geminiApiKey: string;
+  geminiModel: string;
 }
 
 const config: Config = {
@@ -16,6 +17,7 @@ const config: Config = {
   apiVersion: process.env.API_VERSION || 'v1',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:8081',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.0-pro',
 };
 
 export default config;

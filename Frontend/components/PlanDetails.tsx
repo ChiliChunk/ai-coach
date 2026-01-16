@@ -156,7 +156,7 @@ export default function PlanDetails({ planData, hasSchedule, generatingWorkouts,
             <Ionicons name="sparkles-outline" size={20} color={colors.textInverse} />
           )}
           <Text style={styles.createNewButtonText}>
-            {generatingWorkouts ? 'Génération...' : 'Generer les Scéances'}
+            {generatingWorkouts ? 'Génération...' : 'Générer les Séances'}
           </Text>
         </TouchableOpacity>
       )}

@@ -109,9 +109,9 @@ class GeminiService {
       console.log('Generating training plan with data:', planData);
       const fullPrompt = this.generatePrompt(planData);
 
-      console.log('Using Gemini model: gemini-2.0-flash-exp');
+      console.log('Using Gemini model:', config.geminiModel);
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash-exp',
+        model: config.geminiModel,
         generationConfig: {
           temperature: 0.7,
           responseMimeType: 'application/json',

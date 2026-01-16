@@ -142,7 +142,7 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Connectez-vous à Strava pour un plan d'entraînement personnalisé</Text>
+      <Text style={styles.subtitle}>Connectez-vous à Strava pour un plan d'entraînement personnalisé</Text>
 
       <TouchableOpacity
         style={[styles.button, (isLoading || !stravaConfig) && styles.buttonDisabled]}
