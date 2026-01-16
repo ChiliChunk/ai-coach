@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TRAINING_PLAN_KEY = '@training_plan';
 const TRAINING_SESSIONS_KEY = '@training_sessions';
+const ONBOARDING_COMPLETED_KEY = '@onboarding_completed';
 
 export interface TrainingPlan {
   course_label: string;
@@ -135,6 +136,25 @@ export const storageService = {
       await AsyncStorage.removeItem(TRAINING_SESSIONS_KEY);
     } catch (error) {
       console.error('Error deleting training sessions:', error);
+      throw error;
+    }
+  },
+
+  async isOnboardingCompleted(): Promise<boolean> {
+    try {
+      const value = await AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY);
+      return value === 'true';
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      return false;
+    }
+  },
+
+  async setOnboardingCompleted(): Promise<void> {
+    try {
+      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+    } catch (error) {
+      console.error('Error setting onboarding completed:', error);
       throw error;
     }
   },

@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import StravaProfileScreen from './screens/StravaProfileScreen';
 import PlanScreen from './screens/PlanScreen';
 import { colors, fonts } from './constants/theme';
+import OnboardingPopup from './components/OnboardingPopup';
 
 export type RootStackParamList = {
   MainTabs: undefined;
@@ -98,6 +99,7 @@ export default function App() {
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} translucent={false} />
       <Animated.View style={[styles.appContainer, { opacity: appFadeAnim }]}>
         <NavigationContainer>
+          {!showSplash && <OnboardingPopup />}
       <Stack.Navigator
         initialRouteName="MainTabs"
         screenOptions={{

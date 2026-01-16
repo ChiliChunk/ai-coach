@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import RenderHtml from 'react-native-render-html';
 import { colors, fonts, spacing, borderRadius, shadows } from '../constants/theme';
 
 type PopupType = 'success' | 'error' | 'info' | 'warning';
@@ -44,8 +45,10 @@ export default function Popup({
   showCancel = false,
   cancelText = 'Annuler',
 }: PopupProps) {
+  const { width } = useWindowDimensions();
   const iconConfig = getIconConfig(type);
   const hasConfirmAction = onConfirm !== undefined;
+  const contentWidth = Math.min(width - spacing.xl * 2, 320) - spacing.xxl * 2;
 
   return (
     <Modal
@@ -66,7 +69,18 @@ export default function Popup({
               <Ionicons name={iconConfig.name} size={48} color={iconConfig.color} />
             </View>
             <Text style={styles.title}>{title}</Text>
-            <Text style={styles.message}>{message}</Text>
+            <View style={styles.messageContainer}>
+              <RenderHtml
+                contentWidth={contentWidth}
+                source={{ html: message }}
+                baseStyle={{
+                  fontSize: fonts.sizes.md,
+                  fontFamily: fonts.family,
+                  color: colors.textSecondary,
+                  lineHeight: 20,
+                }}
+              />
+            </View>
             <View style={styles.buttonContainer}>
               {(showCancel || hasConfirmAction) && (
                 <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
@@ -121,13 +135,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     textAlign: 'center',
   },
-  message: {
-    fontSize: fonts.sizes.md,
-    fontFamily: fonts.family,
-    color: colors.textSecondary,
-    textAlign: 'center',
+  messageContainer: {
     marginBottom: spacing.xl,
-    lineHeight: 20,
+    alignItems: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
