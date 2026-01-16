@@ -15,9 +15,9 @@ export default function OnboardingPopup({ onComplete }: OnboardingPopupProps) {
 
   const checkOnboardingStatus = async () => {
     const completed = await storageService.isOnboardingCompleted();
-    setVisible(true);
     if (!completed) {
       // setVisible(true);
+      setVisible(true);
     }
   };
 
@@ -39,7 +39,11 @@ export default function OnboardingPopup({ onComplete }: OnboardingPopupProps) {
         <ul style="text-align: left;">
           <li ><b>Crée ton plan d'entraînement personnalisé en quelques clics.</li>
           <li>Ton seul but, cocher toutes les scéances de la semaine, le reste, on verra après</li>
-        </ul>
+          <li>Amuse-toi et profite de chaque course !</li>
+          </ul>
+        </br>
+        Note:  </br>
+          Le respect de tes données personnelles est au max, ton plan est stocké directement sur ton tel ;)
         `}
       buttonText="C'est parti !"
     />
