@@ -88,7 +88,7 @@ export default function PlanDetails({ planData, hasSchedule, generatingWorkouts,
           <Ionicons
             name={planData.stravaConnected ? "checkmark" : "close"}
             size={20}
-            color={planData.stravaConnected ? colors.success : colors.textMuted}
+            color={colors.text}
           />
         </View>
       </View>
