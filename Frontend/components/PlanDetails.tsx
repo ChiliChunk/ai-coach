@@ -52,7 +52,7 @@ export default function PlanDetails({ planData, hasSchedule, generatingWorkouts,
       <View style={styles.divider} />
       <View style={styles.infoGrid}>
         <View style={styles.infoItem}>
-          <Ionicons name="bicycle-outline" size={20} color={colors.accent} />
+          <Ionicons name="walk" size={20} color={colors.accent} />
           <Text style={styles.infoLabel}>Type</Text>
           <Text style={styles.infoValue}>{getLabel('course_type', planData.course_type)}</Text>
         </View>
