@@ -67,7 +67,7 @@ class GeminiService {
 
   private generatePrompt(planData: TrainingPlanInput): string {
     const courseTypeLabel = planData.course_type === 'road_running' ? 'course sur route' : 'trail';
-    const activitiesText = planData.activities?.toString() || '';
+    const activitiesText = planData.activities ? JSON.stringify(planData.activities) : '';
 
     return this.promptTemplate
       .replace(/\{\{course_label\}\}/g, planData.course_label)
@@ -84,7 +84,7 @@ class GeminiService {
     try {
       console.log('Generating mock training plan with data:', planData);
       const fullPrompt = this.generatePrompt(planData);
-      console.log('Prompt initialized (unused in mock mode)');
+      console.log('Prompt initialized fullPrompt:', fullPrompt);
 
       const mockResponse = fs.readFileSync(
         path.join(__dirname, '../mock/gemini_answer.json'),
@@ -108,7 +108,7 @@ class GeminiService {
     try {
       console.log('Generating training plan with data:', planData);
       const fullPrompt = this.generatePrompt(planData);
-
+      console.log('Prompt generated:', fullPrompt);
       console.log('Using Gemini model:', config.geminiModel);
       const model = this.genAI.getGenerativeModel({
         model: config.geminiModel,

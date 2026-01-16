@@ -35,13 +35,13 @@ export interface StravaActivity {
 
 export interface FilteredActivity {
   name: string;
-  distance: number;
-  moving_time: number;
-  total_elevation_gain: number;
+  distance: string;
+  moving_time: string;
+  total_elevation_gain: string;
   type: string;
   sport_type: string;
   start_date: string;
-  average_speed: number;
+  average_speed: string;
   average_heartrate?: number;
 }
 
@@ -231,9 +231,9 @@ class StravaService {
   filterActivitiesForLLM(activities: StravaActivity[]): FilteredActivity[] {
     return activities.map(activity => ({
       name: activity.name,
-      distance: activity.distance/1000 + " km",
-      moving_time: activity.moving_time/60 + " min",
-      total_elevation_gain: activity.total_elevation_gain + " m",
+      distance: (activity.distance/1000).toFixed(2) + " km",
+      moving_time: (activity.moving_time/60).toFixed(2) + " min",
+      total_elevation_gain: activity.total_elevation_gain.toFixed(2) + " m",
       type: activity.type,
       sport_type: activity.sport_type,
       start_date: activity.start_date,
