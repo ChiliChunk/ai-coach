@@ -134,7 +134,7 @@ export default function StravaProfileScreen({ navigation }: Props) {
       title: 'Déconnexion',
       message: 'Voulez-vous vraiment vous déconnecter de Strava?',
       showCancel: true,
-      confirmText: 'Déconnexion',
+      confirmText: 'Logout',
       onConfirm: async () => {
         await stravaService.logout();
         hidePopup();

@@ -24,7 +24,8 @@ Génère un plan d'entraînement complet pour la course suivante :
 4. Ne donne pas de vitesse cible ni de FC à suivre, fait avec un RPE de 1 à 10
 5. Si tu propose un entrainement croisé, ajoute toujours une alternative course à pied.
 6. Respecte une progression logique avec alternance effort/récupération
-7. Inclus une phase de préparation, une phase de développement et une phase d'affûtage
+7. Ne mets pas d'indications de jours de quand faire les scéances
+8. Inclus une phase de préparation, une phase de développement et une phase d'affûtage
 
 **Format de réponse attendu (JSON) :**
 {

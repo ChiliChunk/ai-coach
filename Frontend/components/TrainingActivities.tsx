@@ -211,9 +211,6 @@ export default function TrainingActivities({ trainingSchedule, onToggleDone }: T
 
   return (
     <View style={styles.scheduleContainer}>
-      <View style={styles.scheduleHeader}>
-        <Text style={styles.scheduleTitle}>Programme d'entraînement</Text>
-      </View>
       {trainingSchedule.weeks.map((week) => renderWeek(week))}
     </View>
   );
