@@ -67,8 +67,6 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
     ]}>
       <TouchableOpacity
         onPress={onToggleExpanded}
-        onLongPress={onToggleDone}
-        delayLongPress={300}
         activeOpacity={1}
       >
         <View style={styles.sessionHeader}>
@@ -83,7 +81,7 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
               >
                 <Ionicons
                   name={session.done ? "checkmark-circle" : "ellipse-outline"}
-                  size={24}
+                  size={28}
                   color={session.done ? colors.success : colors.textMuted}
                 />
               </TouchableOpacity>
@@ -92,6 +90,11 @@ function SessionCard({ session, weekNumber, isExpanded, onToggleExpanded, onTogg
               </Text>
             </View>
             <View style={styles.sessionTitleRowRight}>
+              {session.optional && (
+                <View style={styles.optionalBadge}>
+                  <Text style={styles.optionalText}>Optionnelle</Text>
+                </View>
+              )}
               <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(session.intensity) }]}>
                 <Text style={styles.intensityText}>{session.intensity}</Text>
               </View>
@@ -194,9 +197,6 @@ export default function TrainingActivities({ trainingSchedule, onToggleDone }: T
   };
 
   const renderWeek = (week: Week) => {
-    if (week.week_number === 1) {
-      console.log('Week 1 sessions optional values:', week.sessions.map(s => ({ session: s.session_number, optional: s.optional })));
-    }
     return (
       <View key={`week-${week.week_number}`} style={styles.weekContainer}>
         <View style={styles.weekHeader}>
@@ -326,6 +326,21 @@ const styles = StyleSheet.create({
     color: colors.textInverse,
     fontWeight: fonts.weights.semibold,
     textTransform: 'capitalize',
+  },
+  optionalBadge: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderStyle: 'dashed',
+  },
+  optionalText: {
+    fontSize: fonts.sizes.xs,
+    fontFamily: fonts.family,
+    color: colors.textMuted,
+    fontWeight: fonts.weights.semibold,
   },
   sessionTitle: {
     fontSize: fonts.sizes.lg,

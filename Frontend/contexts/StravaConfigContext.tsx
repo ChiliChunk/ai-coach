@@ -23,9 +23,7 @@ export function StravaConfigProvider({ children }: StravaConfigProviderProps) {
     setIsLoading(true);
     setError(null);
     try {
-      console.log('StravaConfigProvider: Fetching config...');
       const fetchedConfig = await stravaService.getConfig();
-      console.log('StravaConfigProvider: Config fetched successfully', fetchedConfig);
       setConfig(fetchedConfig);
     } catch (err) {
       const errorMessage = 'Failed to load Strava configuration. Please check your backend connection.';

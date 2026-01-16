@@ -65,7 +65,6 @@ export default function StravaProfileScreen({ navigation }: Props) {
   const checkStravaConnection = async () => {
     try {
       const isLinked = await stravaService.isAuthenticated();
-      console.log('Strava connection status:', isLinked);
       setIsStravaLinked(isLinked);
       if (isLinked) {
         await loadData();

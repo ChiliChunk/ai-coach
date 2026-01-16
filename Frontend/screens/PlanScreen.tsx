@@ -75,7 +75,6 @@ export default function PlanScreen() {
   };
 
   const handlePlanComplete = (planData: any) => {
-    console.log('Plan créé avec les données:', planData);
     setShowCreateForm(false);
     loadPlan();
   };
@@ -125,7 +124,6 @@ export default function PlanScreen() {
           user_presentation: planData.user_presentation,
           userId,
         }
-      console.log('Request data for training plan generation:', data);
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.TRAINING.MOCK}`, {
         method: 'POST',
         headers: {
@@ -145,7 +143,6 @@ export default function PlanScreen() {
           message: 'Votre programme d\'entraînement a été créé avec succès !',
           buttonText: 'Voir le programme',
         });
-        console.log('Training plan generated:', result.data);
       } else {
         showPopup({
           type: 'error',

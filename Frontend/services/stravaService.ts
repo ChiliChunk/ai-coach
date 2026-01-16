@@ -74,11 +74,7 @@ class StravaService {
   async getConfig(): Promise<StravaConfig> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.CONFIG}`;
-      console.log('Fetching config from:', url);
-
       const response = await axios.get<StravaConfig>(url);
-      console.log('Config received:', response.data);
-
       this.config = response.data;
       await AsyncStorage.setItem(STRAVA_CONFIG_KEY, JSON.stringify(response.data));
       return this.config;
@@ -96,7 +92,6 @@ class StravaService {
       const cachedConfig = await AsyncStorage.getItem(STRAVA_CONFIG_KEY);
       if (cachedConfig) {
         this.config = JSON.parse(cachedConfig);
-        console.log('Using cached config as fallback:', this.config);
         return this.config!;
       }
 
@@ -112,17 +107,11 @@ class StravaService {
       const userId = await this.getUserId();
 
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STRAVA.EXCHANGE}`;
-      console.log('Exchanging code for token...');
-      console.log('URL:', url);
-      console.log('User ID:', userId);
-      console.log('Code:', code);
-
       const response = await axios.post<AuthResponse>(url, {
         code,
         userId,
       });
 
-      console.log('Token exchange successful:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error exchanging code for token:', error);
