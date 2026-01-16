@@ -38,7 +38,7 @@ export default function OnboardingPopup({ onComplete }: OnboardingPopupProps) {
         <b>Comment utiliser l'appli:</b>
         <ul style="text-align: left;">
           <li ><b>Crée ton plan d'entraînement personnalisé en quelques clics.</li>
-          <li >Fais les scéances comme tu le sens: ton seul but, cocher tout les scéance de la semaine, l'ordre on verra après</li>
+          <li>Ton seul but, cocher toutes les scéances de la semaine, le reste, on verra après</li>
         </ul>
         `}
       buttonText="C'est parti !"
