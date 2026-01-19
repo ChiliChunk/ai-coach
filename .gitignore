@@ -3,5 +3,5 @@ Frontend/.expo/
 Frontend/config/strava.config.ts
 Frontend/package-lock.json
 Backend/node_modules/
-
-
+Frontend/android/
+Frontend/ios/
