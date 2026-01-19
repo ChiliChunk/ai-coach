@@ -16,6 +16,12 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.aicoach.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -25,6 +31,11 @@
     "plugins": [
       "expo-web-browser"
     ],
-    "scheme": "ai-coach"
+    "scheme": "ai-coach",
+    "extra": {
+      "eas": {
+        "projectId": "39c02f7d-7d9f-4376-baee-a8fda109c430"
+      }
+    }
   }
 }
