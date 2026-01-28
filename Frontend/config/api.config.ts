@@ -4,7 +4,7 @@
 // BASE_URL: 'https://ai-coach-m9y8.onrender.com/api/v1',
 // BASE_URL: 'http://192.168.1.29:3000/api/v1'
 export const API_CONFIG = {
-  BASE_URL: 'http://192.168.1.29:3000/api/v1',
+  BASE_URL: 'https://ai-coach-m9y8.onrender.com/api/v1',
   ENDPOINTS: {
     STRAVA: {
       CONFIG: '/strava/config',
