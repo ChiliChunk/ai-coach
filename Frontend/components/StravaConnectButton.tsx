@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Linking,
 } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
@@ -56,35 +55,6 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
 
   useEffect(() => {
     loadConfig();
-  }, []);
-
-  useEffect(() => {
-    const handleDeepLink = (event: { url: string }) => {
-      const url = event.url;
-      if (!url.includes('exchange_token')) return;
-
-      const params = new URLSearchParams(url.split('?')[1]);
-      const code = params.get('code');
-      const error = params.get('error');
-
-      if (error) {
-        showPopup({
-          type: 'error',
-          title: 'Erreur',
-          message: 'Échec de la connexion à Strava',
-        });
-        setIsLoading(false);
-        onAuthError?.('Échec de la connexion à Strava');
-        return;
-      }
-
-      if (code) {
-        handleAuthorizationCode(code);
-      }
-    };
-
-    const subscription = Linking.addEventListener('url', handleDeepLink);
-    return () => subscription.remove();
   }, []);
 
   const loadConfig = async () => {
@@ -141,7 +111,27 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
         `&scope=${stravaConfig.scopes.join(',')}` +
         `&state=${encodeURIComponent(state)}`;
 
-      await WebBrowser.openBrowserAsync(authUrl);
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, returnUri);
+
+      if (result.type === 'success' && result.url) {
+        const params = new URLSearchParams(result.url.split('?')[1]);
+        const code = params.get('code');
+        const error = params.get('error');
+
+        if (error) {
+          showPopup({ type: 'error', title: 'Erreur', message: 'Échec de la connexion à Strava' });
+          setIsLoading(false);
+          onAuthError?.('Échec de la connexion à Strava');
+          return;
+        }
+
+        if (code) {
+          await handleAuthorizationCode(code);
+          return;
+        }
+      }
+
+      setIsLoading(false);
     } catch (error) {
       showPopup({
         type: 'error',
