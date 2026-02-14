@@ -6,6 +6,9 @@ const router = Router();
 // Configuration publique
 router.get('/config', stravaController.getConfig);
 
+// OAuth callback (Strava redirects here, then we redirect to the app)
+router.get('/auth/callback', stravaController.oauthCallback);
+
 // Authentification
 router.post('/auth/exchange', stravaController.exchangeToken);
 router.post('/auth/refresh', stravaController.refreshToken);

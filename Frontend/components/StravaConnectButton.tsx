@@ -5,14 +5,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
-import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 import stravaService, { StravaConfig } from '../services/stravaService';
 import Popup from './Popup';
 import { colors, fonts, spacing, borderRadius, shadows } from '../constants/theme';
-
-WebBrowser.maybeCompleteAuthSession();
+import { API_CONFIG } from '../config/api.config';
 
 type Props = {
   onAuthSuccess: () => void;
@@ -25,6 +25,16 @@ interface PopupState {
   title: string;
   message: string;
 }
+
+const REDIRECT_URI = `${API_CONFIG.BASE_URL}/strava/auth/callback`;
+
+const getReturnUri = (): string => {
+  if (Constants.appOwnership === 'expo') {
+    const debuggerHost = Constants.expoConfig?.hostUri || Constants.manifest2?.extra?.expoGo?.debuggerHost;
+    return `exp://${debuggerHost}/--/exchange_token`;
+  }
+  return 'ai-coach://exchange_token';
+};
 
 export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,12 +54,37 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
     setPopup(prev => ({ ...prev, visible: false }));
   };
 
-  const redirectUri = AuthSession.makeRedirectUri({
-    path: 'exchange_token'
-  });
-
   useEffect(() => {
     loadConfig();
+  }, []);
+
+  useEffect(() => {
+    const handleDeepLink = (event: { url: string }) => {
+      const url = event.url;
+      if (!url.includes('exchange_token')) return;
+
+      const params = new URLSearchParams(url.split('?')[1]);
+      const code = params.get('code');
+      const error = params.get('error');
+
+      if (error) {
+        showPopup({
+          type: 'error',
+          title: 'Erreur',
+          message: 'Échec de la connexion à Strava',
+        });
+        setIsLoading(false);
+        onAuthError?.('Échec de la connexion à Strava');
+        return;
+      }
+
+      if (code) {
+        handleAuthorizationCode(code);
+      }
+    };
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    return () => subscription.remove();
   }, []);
 
   const loadConfig = async () => {
@@ -65,44 +100,10 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
     }
   };
 
-  const discovery = {
-    authorizationEndpoint: stravaConfig?.authorizationEndpoint || 'https://www.strava.com/oauth/mobile/authorize',
-  };
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: stravaConfig?.clientId || '',
-      scopes: stravaConfig?.scopes || [],
-      redirectUri: redirectUri,
-      responseType: AuthSession.ResponseType.Code,
-      extraParams: {
-        approval_prompt: 'force',
-      },
-    },
-    discovery
-  );
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      handleAuthorizationCode(code);
-    } else if (response?.type === 'error') {
-      showPopup({
-        type: 'error',
-        title: 'Erreur',
-        message: 'Échec de la connexion à Strava',
-      });
-      setIsLoading(false);
-      onAuthError?.('Échec de la connexion à Strava');
-    } else if (response?.type === 'dismiss') {
-      setIsLoading(false);
-    }
-  }, [response]);
-
   const handleAuthorizationCode = async (code: string) => {
     setIsLoading(true);
     try {
-      const tokenResponse = await stravaService.exchangeCodeForToken(code, redirectUri);
+      const tokenResponse = await stravaService.exchangeCodeForToken(code, REDIRECT_URI);
       if (tokenResponse) {
         onAuthSuccess();
       } else {
@@ -126,9 +127,21 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
   };
 
   const handleLogin = async () => {
+    if (!stravaConfig) return;
     setIsLoading(true);
     try {
-      await promptAsync();
+      const returnUri = getReturnUri();
+      const state = btoa(returnUri);
+      const authUrl =
+        `https://www.strava.com/oauth/mobile/authorize` +
+        `?client_id=${stravaConfig.clientId}` +
+        `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+        `&response_type=code` +
+        `&approval_prompt=force` +
+        `&scope=${stravaConfig.scopes.join(',')}` +
+        `&state=${encodeURIComponent(state)}`;
+
+      await WebBrowser.openBrowserAsync(authUrl);
     } catch (error) {
       showPopup({
         type: 'error',
@@ -147,7 +160,7 @@ export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Prop
       <TouchableOpacity
         style={[styles.button, (isLoading || !stravaConfig) && styles.buttonDisabled]}
         onPress={handleLogin}
-        disabled={isLoading || !request || !stravaConfig}
+        disabled={isLoading || !stravaConfig}
       >
         {isLoading ? (
           <ActivityIndicator color="white" />

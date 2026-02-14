@@ -271,6 +271,37 @@ export const getValidAccessToken = async (userId: string): Promise<string | null
   return userTokens.accessToken;
 };
 
+export const oauthCallback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { code, scope, error, state } = req.query;
+
+    let returnUri = 'ai-coach://exchange_token';
+    if (state) {
+      try {
+        returnUri = Buffer.from(state as string, 'base64').toString('utf-8');
+      } catch (_) {}
+    }
+
+    if (error) {
+      res.redirect(`${returnUri}?error=${error}`);
+      return;
+    }
+
+    if (!code) {
+      res.redirect(`${returnUri}?error=no_code`);
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('code', code as string);
+    if (scope) params.append('scope', scope as string);
+
+    res.redirect(`${returnUri}?${params.toString()}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 /**
  * Vérifie si l'utilisateur est authentifié
  */
