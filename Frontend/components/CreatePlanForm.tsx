@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,17 +10,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { storageService } from '../services/storageService';
-import stravaService from '../services/stravaService';
-import axios from 'axios';
-import { API_CONFIG } from '../config/api.config';
-import StravaConnectButton from './StravaConnectButton';
-import Popup from './Popup';
-import { colors, fonts, spacing, borderRadius, shadows } from '../constants/theme';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { storageService } from "../services/storageService";
+import stravaService from "../services/stravaService";
+import axios from "axios";
+import { API_CONFIG } from "../config/api.config";
+import StravaConnectButton from "./StravaConnectButton";
+import Popup from "./Popup";
+import {
+  colors,
+  fonts,
+  spacing,
+  borderRadius,
+  shadows,
+} from "../constants/theme";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 type Props = {
   onClose: () => void;
@@ -29,7 +35,7 @@ type Props = {
 
 interface PopupState {
   visible: boolean;
-  type: 'success' | 'error' | 'info' | 'warning';
+  type: "success" | "error" | "info" | "warning";
   title: string;
   message: string;
 }
@@ -38,27 +44,27 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [popup, setPopup] = useState<PopupState>({
     visible: false,
-    type: 'error',
-    title: '',
-    message: '',
+    type: "error",
+    title: "",
+    message: "",
   });
 
-  const showPopup = (config: Omit<PopupState, 'visible'>) => {
+  const showPopup = (config: Omit<PopupState, "visible">) => {
     setPopup({ ...config, visible: true });
   };
 
   const hidePopup = () => {
-    setPopup(prev => ({ ...prev, visible: false }));
+    setPopup((prev) => ({ ...prev, visible: false }));
   };
 
   const [formData, setFormData] = useState({
-    course_label: '',
-    course_type: '',
-    course_km: '',
-    course_elevation: '',
-    frequency: '',
-    duration: '',
-    user_presentation: '',
+    course_label: "",
+    course_type: "",
+    course_km: "",
+    course_elevation: "",
+    frequency: "",
+    duration: "",
+    user_presentation: "",
     stravaConnected: false,
   });
 
@@ -66,70 +72,74 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
 
   useEffect(() => {
     const currentQuestion = questions[currentStep];
-    if (currentQuestion.type === 'choice' || currentQuestion.type === 'strava') {
+    if (
+      currentQuestion.type === "choice" ||
+      currentQuestion.type === "strava"
+    ) {
       Keyboard.dismiss();
     }
   }, [currentStep]);
 
   const questions = [
     {
-      id: 'course_label',
-      question: 'Quel est le nom de la course ?',
-      type: 'text' as const,
-      placeholder: 'Ex: Marathon de Paris',
+      id: "course_label",
+      question: "Quel est le nom de la course ?",
+      type: "text" as const,
+      placeholder: "Ex: Marathon de Paris",
     },
     {
-      id: 'course_type',
-      question: 'Quel est le type de course?',
-      type: 'choice' as const,
+      id: "course_type",
+      question: "Quel est le type de course?",
+      type: "choice" as const,
       options: [
-        { label: 'Course sur route', value: 'road_running' },
-        { label: 'Trail', value: 'trail' },
+        { label: "Course sur route", value: "road_running" },
+        { label: "Trail", value: "trail" },
       ],
     },
-     {
-      id: 'course_km',
-      question: 'Quel est la distance de la course? (en km)',
-      type: 'number' as const,
-      placeholder: 'Ex: 42.195',
+    {
+      id: "course_km",
+      question: "Quel est la distance de la course? (en km)",
+      type: "number" as const,
+      placeholder: "Ex: 42.195",
     },
     {
-      id: 'course_elevation',
+      id: "course_elevation",
       question: "Quel est le dénivelé de la course? (en mètres)",
-      type: 'number' as const,
-      placeholder: 'Ex: 500',
+      type: "number" as const,
+      placeholder: "Ex: 500",
     },
-     {
-      id: 'frequency',
-      question: 'Combien de séances par semaine ?',
-      type: 'choice' as const,
+    {
+      id: "frequency",
+      question: "Combien de séances par semaine ?",
+      type: "choice" as const,
       options: [
-        { label: '2 + 1 optionnel', value: '2+1' },
-        { label: '3', value: '3' },
-        { label: '3 + 1 optionnel', value: '3+1' },
-        { label: '4', value: '4' },
-        { label: '4 + 1 optionnel', value: '4+1' },
+        { label: "2 + 1 optionnel", value: "2+1" },
+        { label: "3", value: "3" },
+        { label: "3 + 1 optionnel", value: "3+1" },
+        { label: "4", value: "4" },
+        { label: "4 + 1 optionnel", value: "4+1" },
       ],
     },
     {
-      id: 'duration',
+      id: "duration",
       question: "Dans combien de temps est la course? (en semaines) ?",
-      type: 'number' as const,
-      placeholder: 'Ex: 8',
-      unit: 'semaines',
+      type: "number" as const,
+      placeholder: "Ex: 8",
+      unit: "semaines",
     },
     {
-      id: 'strava_connect',
-      question: 'Connexion à Strava (optionnel)',
-      type: 'strava' as const,
+      id: "strava_connect",
+      question: "Connexion à Strava (optionnel)",
+      type: "strava" as const,
       optional: true,
     },
     {
-      id: 'user_presentation',
-      question: 'Présentez-vous en quelques mots',
-      type: 'multiline' as const,
-      placeholder: 'Mon temps au semi est 2h10, je m\'entraine depuis 2 ans...',
-    }
+      id: "user_presentation",
+      question: "Présentez-vous en quelques mots",
+      type: "multiline" as const,
+      placeholder:
+        "Mon temps au semi est 2h10, je m'entraine depuis 2 ans, je peux courir en côte fois par semaine...",
+    },
   ];
 
   const handleNext = () => {
@@ -151,9 +161,10 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
       onComplete(formData);
     } catch (error) {
       showPopup({
-        type: 'error',
-        title: 'Erreur',
-        message: 'Impossible de sauvegarder le plan d\'entraînement. Veuillez réessayer.',
+        type: "error",
+        title: "Erreur",
+        message:
+          "Impossible de sauvegarder le plan d'entraînement. Veuillez réessayer.",
       });
     }
   };
@@ -176,7 +187,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
 
   const handleNumberInput = (questionId: string, value: string) => {
     // Only allow numbers
-    const numericValue = value.replace(/[^0-9]/g, '');
+    const numericValue = value.replace(/[^0-9]/g, "");
     setFormData({ ...formData, [questionId]: numericValue });
   };
 
@@ -185,21 +196,21 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
   };
 
   const handleStravaConnected = () => {
-    setFormData(prev => ({ ...prev, stravaConnected: true }));
+    setFormData((prev) => ({ ...prev, stravaConnected: true }));
     setTimeout(handleNext, 500);
   };
 
   const currentQuestion = questions[currentStep];
   const isLastStep = currentStep === questions.length - 1;
   const canProceed =
-    currentQuestion.type === 'strava'
+    currentQuestion.type === "strava"
       ? true
       : formData[currentQuestion.id as keyof typeof formData];
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={0}
     >
       <View style={styles.header}>
@@ -232,14 +243,14 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
             </Text>
             <Text style={styles.questionText}>{question.question}</Text>
 
-            {question.type === 'strava' && (
+            {question.type === "strava" && (
               <View style={styles.stravaContainer}>
                 <StravaConnectButton
                   onAuthSuccess={handleStravaConnected}
                   onAuthError={(error) => {
                     showPopup({
-                      type: 'error',
-                      title: 'Erreur de connexion',
+                      type: "error",
+                      title: "Erreur de connexion",
                       message: error,
                     });
                   }}
@@ -247,7 +258,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
               </View>
             )}
 
-            {question.type === 'choice' && question.options && (
+            {question.type === "choice" && question.options && (
               <View style={styles.optionsContainer}>
                 {question.options.map((option) => (
                   <TouchableOpacity
@@ -257,7 +268,9 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
                       formData[question.id as keyof typeof formData] ===
                         option.value && styles.optionButtonSelected,
                     ]}
-                    onPress={() => handleSelectOption(question.id, option.value)}
+                    onPress={() =>
+                      handleSelectOption(question.id, option.value)
+                    }
                   >
                     <Text
                       style={[
@@ -273,30 +286,37 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
               </View>
             )}
 
-            {question.type === 'number' && (
+            {question.type === "number" && (
               <View style={styles.numberInputContainer}>
                 <TextInput
                   style={styles.numberInput}
-                  placeholder={question.placeholder || 'Entrez un nombre'}
+                  placeholder={question.placeholder || "Entrez un nombre"}
                   placeholderTextColor={colors.textMuted}
                   keyboardType="numeric"
-                  value={formData[question.id as keyof typeof formData] as string}
-                  onChangeText={(value) => handleNumberInput(question.id, value)}
-                  maxLength={question.id === 'course_elevation' ? 5 : 3}
+                  value={
+                    formData[question.id as keyof typeof formData] as string
+                  }
+                  onChangeText={(value) =>
+                    handleNumberInput(question.id, value)
+                  }
+                  maxLength={question.id === "course_elevation" ? 5 : 3}
                 />
-                {question.unit && formData[question.id as keyof typeof formData] && (
-                  <Text style={styles.unitText}>{question.unit}</Text>
-                )}
+                {question.unit &&
+                  formData[question.id as keyof typeof formData] && (
+                    <Text style={styles.unitText}>{question.unit}</Text>
+                  )}
               </View>
             )}
 
-            {question.type === 'text' && (
+            {question.type === "text" && (
               <View style={styles.textInputContainer}>
                 <TextInput
                   style={styles.textInput}
-                  placeholder={question.placeholder || 'Entrez votre réponse'}
+                  placeholder={question.placeholder || "Entrez votre réponse"}
                   placeholderTextColor={colors.textMuted}
-                  value={formData[question.id as keyof typeof formData] as string}
+                  value={
+                    formData[question.id as keyof typeof formData] as string
+                  }
                   onChangeText={(value) => handleTextInput(question.id, value)}
                   maxLength={50}
                   autoCapitalize="words"
@@ -304,13 +324,15 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
               </View>
             )}
 
-            {question.type === 'multiline' && (
+            {question.type === "multiline" && (
               <View style={styles.textInputContainer}>
                 <TextInput
                   style={[styles.textInput, styles.multilineInput]}
-                  placeholder={question.placeholder || 'Entrez votre réponse'}
+                  placeholder={question.placeholder || "Entrez votre réponse"}
                   placeholderTextColor={colors.textMuted}
-                  value={formData[question.id as keyof typeof formData] as string}
+                  value={
+                    formData[question.id as keyof typeof formData] as string
+                  }
                   onChangeText={(value) => handleTextInput(question.id, value)}
                   maxLength={300}
                   multiline
@@ -325,10 +347,7 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
 
       <View style={styles.navigation}>
         {currentStep > 0 && (
-          <TouchableOpacity
-            onPress={handlePrevious}
-            style={styles.navButton}
-          >
+          <TouchableOpacity onPress={handlePrevious} style={styles.navButton}>
             <Ionicons name="arrow-back" size={24} color={colors.primary} />
             <Text style={styles.navButtonText}>Précédent</Text>
           </TouchableOpacity>
@@ -342,9 +361,17 @@ export default function CreatePlanForm({ onClose, onComplete }: Props) {
             style={[styles.navButton, styles.nextButton]}
           >
             <Text style={styles.nextButtonText}>
-              {isLastStep ? 'Créer le plan' : (currentQuestion.type === 'strava' ? 'Passer' : 'Suivant')}
+              {isLastStep
+                ? "Créer le plan"
+                : currentQuestion.type === "strava"
+                  ? "Passer"
+                  : "Suivant"}
             </Text>
-            <Ionicons name="arrow-forward" size={24} color={colors.textInverse} />
+            <Ionicons
+              name="arrow-forward"
+              size={24}
+              color={colors.textInverse}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -371,11 +398,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   closeButton: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   progressContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: spacing.xl,
     gap: spacing.sm,
   },
@@ -390,7 +417,7 @@ const styles = StyleSheet.create({
   },
   slidesContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   slide: {
     width: width,
@@ -436,14 +463,14 @@ const styles = StyleSheet.create({
     fontWeight: fonts.weights.semibold,
   },
   navigation: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: spacing.xl,
     paddingBottom: spacing.xxxl,
-    alignItems: 'center',
+    alignItems: "center",
   },
   navButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     padding: spacing.md,
   },
@@ -466,7 +493,7 @@ const styles = StyleSheet.create({
     fontWeight: fonts.weights.semibold,
   },
   numberInputContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: spacing.xl,
   },
   numberInput: {
@@ -479,7 +506,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.family,
     color: colors.accent,
     fontWeight: fonts.weights.bold,
-    textAlign: 'center',
+    textAlign: "center",
     minWidth: 150,
     ...shadows.sm,
   },
@@ -511,14 +538,14 @@ const styles = StyleSheet.create({
   },
   stravaContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   optionalText: {
     fontSize: fonts.sizes.md,
     fontFamily: fonts.family,
     color: colors.textMuted,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: spacing.xl,
     paddingHorizontal: spacing.xl,
   },

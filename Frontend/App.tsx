@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar, View, Image, StyleSheet, Animated } from 'react-native';
+import { StatusBar, View, Image, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 import StravaProfileScreen from './screens/StravaProfileScreen';
 import PlanScreen from './screens/PlanScreen';
 import { colors, fonts } from './constants/theme';
 import OnboardingPopup from './components/OnboardingPopup';
+import { API_CONFIG } from './config/api.config';
+import { storageService } from './services/storageService';
 
 export type RootStackParamList = {
   MainTabs: undefined;
@@ -71,11 +74,12 @@ function MainTabs() {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const appFadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const hideSplash = () => {
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -90,8 +94,24 @@ export default function App() {
       ]).start(() => {
         setShowSplash(false);
       });
-    }, 2000);
-    return () => clearTimeout(timer);
+    };
+
+    const init = async () => {
+      const hasPlan = await storageService.hasTrainingPlan();
+
+      if (!hasPlan) {
+        setShowLoader(true);
+        const minDelay = new Promise(resolve => setTimeout(resolve, 2000));
+        const ping = axios.get(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.HEALTH}`).catch(() => {});
+        await Promise.all([minDelay, ping]);
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      hideSplash();
+    };
+
+    init();
   }, []);
 
   return (
@@ -128,6 +148,13 @@ export default function App() {
             style={styles.splashImage}
             resizeMode="contain"
           />
+          {showLoader && (
+            <ActivityIndicator
+              size="small"
+              color={colors.textMuted}
+              style={styles.loader}
+            />
+          )}
         </Animated.View>
       )}
     </View>
@@ -151,5 +178,9 @@ const styles = StyleSheet.create({
   splashImage: {
     width: '100%',
     height: '100%',
+  },
+  loader: {
+    position: 'absolute',
+    bottom: 60,
   },
 });

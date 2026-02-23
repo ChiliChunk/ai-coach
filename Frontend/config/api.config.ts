@@ -20,5 +20,6 @@ export const API_CONFIG = {
       GENERATE: '/training/generate',
       MOCK: '/training/mock',
     },
+    HEALTH: '/health',
   },
 };
