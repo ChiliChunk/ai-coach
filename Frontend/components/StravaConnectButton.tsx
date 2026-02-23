@@ -32,7 +32,7 @@ const getReturnUri = (): string => {
     const debuggerHost = Constants.expoConfig?.hostUri || Constants.manifest2?.extra?.expoGo?.debuggerHost;
     return `exp://${debuggerHost}/--/exchange_token`;
   }
-  return 'ai-coach://exchange_token';
+  return 'casual-coach://exchange_token';
 };
 
 export default function StravaConnectButton({ onAuthSuccess, onAuthError }: Props) {

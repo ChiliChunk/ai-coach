@@ -275,7 +275,7 @@ export const oauthCallback = async (req: Request, res: Response, next: NextFunct
   try {
     const { code, scope, error, state } = req.query;
 
-    let returnUri = 'ai-coach://exchange_token';
+    let returnUri = 'casual-coach://exchange_token';
     if (state) {
       try {
         returnUri = Buffer.from(state as string, 'base64').toString('utf-8');

@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (_req, res) => {
   res.json({
     success: true,
-    message: "AI Coach API",
+    message: "Casual Coach API",
     version: config.apiVersion,
     status: "running",
   });
